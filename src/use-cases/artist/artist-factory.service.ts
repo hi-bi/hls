@@ -3,8 +3,8 @@ import { Artist } from '../../core/entities';
 import { CreateArtistDto, UpdateArtistDto } from '../../core/dtos';
 
 @Injectable()
-export class AuthorFactoryService {
-  createNewAuthor(createArtistDto: CreateArtistDto) {
+export class ArtistFactoryService {
+  createNewArtist(createArtistDto: CreateArtistDto) {
     const newArtist = new Artist();
     newArtist.name = createArtistDto.name;
     newArtist.grammy = createArtistDto.grammy;
@@ -12,7 +12,7 @@ export class AuthorFactoryService {
     return newArtist;
   }
 
-  updateArtistr(updateArtistDto: UpdateArtistDto) {
+  updateArtist(updateArtistDto: UpdateArtistDto) {
     const newArtist = new Artist();
     newArtist.name = updateArtistDto.name;
     newArtist.grammy = updateArtistDto.grammy;
