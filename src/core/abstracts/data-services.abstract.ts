@@ -1,14 +1,14 @@
 import { Album, Artist, Favorites, Track, User} from '../entities';
-import { IGenericRepository,IGenericFavoritesRepository } from './generic-repository-abstract';
+import { IGenericRepository,IGenericFavoritesRepository } from './generic-repository.abstract';
 
 export abstract class IDataServices {
   abstract album: IGenericRepository<Album>;
 
   abstract artist: IGenericRepository<Artist>;
 
-  abstract track: IGenericRepository<Favorites>;
+  abstract track: IGenericRepository<Track>;
 
-  abstract user: IGenericRepository<Favorites>;
+  abstract user: IGenericRepository<User>;
 
   abstract favorites: IGenericFavoritesRepository<Favorites>;
 
