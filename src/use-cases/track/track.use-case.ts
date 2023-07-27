@@ -24,7 +24,7 @@ export class TrackUseCases {
     return this.dataServices.track.create(album);
   }
 
-  updateAlbum(
+  updateTrack(
     trackId: string,
     updateTrackDto: UpdateTrackDto,
   ): Promise<Track> {
