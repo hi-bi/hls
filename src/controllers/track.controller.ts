@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { CreateTrackDto, UpdateTrackDto } from '../core/dtos';
 import { TrackUseCases } from '../use-cases/track/track.use-case';
 
-@Controller('api/track')
+@Controller('track')
 export class TrackController {
   constructor(private trackUseCases: TrackUseCases) {}
 

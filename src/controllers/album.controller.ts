@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { CreateAlbumDto, UpdateAlbumDto } from '../core/dtos';
 import { AlbumUseCases } from '../use-cases/album/album.use-case';
 
-@Controller('api/album')
+@Controller('album')
 export class AlbumController {
   constructor(private albumUseCases: AlbumUseCases) {}
 

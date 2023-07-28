@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from '../core/dtos';
 import { UserUseCases } from '../use-cases/user/user.use-case';
 
-@Controller('api/user')
+@Controller('user')
 export class UserController {
   constructor(private userUseCases: UserUseCases) {}
 

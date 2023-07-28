@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { CreateArtistDto, UpdateArtistDto } from '../core/dtos';
 import { ArtistUseCases } from '../use-cases/artist/artist.use-case';
 
-@Controller('api/artist')
+@Controller('artist')
 export class ArtistController {
   constructor(private artistUseCases: ArtistUseCases) {}
 
