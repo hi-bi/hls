@@ -12,6 +12,7 @@ export class UserUseCases {
   ) {}
 
   getAllUsers(): Promise<User[]> {
+    console.log(this.dataServices)
     return this.dataServices.user.getAll();
   }
 

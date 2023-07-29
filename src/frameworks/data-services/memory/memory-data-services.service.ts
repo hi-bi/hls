@@ -23,6 +23,8 @@ export class MemoryDataServices
     onApplicationBootstrap() {
         this.album = new MemoryAlbumRepository<Album>;
         this.artist = new MemoryArtistRepository<Artist>;
+        this.track = new MemoryTrackRepository<Track>;
+        this.user = new MemoryUserRepository<User>;
         
     }
   }

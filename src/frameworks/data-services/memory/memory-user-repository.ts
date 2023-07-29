@@ -10,6 +10,7 @@ export class MemoryUserRepository<T> implements IGenericRepository<T> {
     }
     
     getAll(): Promise<T[]> {
+        console.log('user getAll(): ');
         const allRec = Array.from(this._repository.values());
         return Promise.resolve(allRec);
 //        throw new Error('Method not implemented.');
