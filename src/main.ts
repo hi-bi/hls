@@ -1,21 +1,28 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { dirname, join } from 'node:path';
-import { readFileSync } from 'node:fs';
-import { SwaggerModule } from '@nestjs/swagger';
-import YAML from 'yaml'
+import { writeFileSync } from 'node:fs';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
 
-  const appPort: number = parseInt(process.env.APP_PORT || '4000'); 
-
-  const swaggerDocPath = join(dirname(__dirname), 'doc', 'api.yaml');
-  const swaggerDoc = readFileSync(swaggerDocPath, 'utf-8');
-  const doc = YAML.parse(swaggerDoc)
+  const appPort: number = parseInt(process.env.PORT || '4000');
   
+  console.log('port: ', appPort, process.env.PORT)
+
   const app = await NestFactory.create(AppModule);
 
-  SwaggerModule.setup('doc', app, doc);
+  
+  const options = new DocumentBuilder()
+    .setTitle("Home Library Service")
+    .setDescription("Home music library service")
+    .setVersion("1.0")
+    .build();
+const document = SwaggerModule.createDocument(app, options);
+
+const swaggerDoc = writeFileSync("./doc/swagger-spec.json", JSON.stringify(document));
+
+SwaggerModule.setup("/doc", app, document);
 
   await app.listen(appPort);
 }

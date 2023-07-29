@@ -8,9 +8,11 @@ import { TrackUseCasesModule } from './use-cases/track/track-use-cases.module';
 import { UserUseCasesModule } from './use-cases/user/user-use-cases.module';
 
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     DataServicesModule,
     AlbumUseCasesModule,
     ArtistUseCasesModule,
