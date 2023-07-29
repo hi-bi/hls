@@ -15,7 +15,7 @@ export class TrackUseCases {
     return this.dataServices.track.getAll();
   }
 
-  getTrackById(id: any): Promise<Track> {
+  getTrackById(id: string): Promise<Track> {
     return this.dataServices.track.get(id);
   }
 

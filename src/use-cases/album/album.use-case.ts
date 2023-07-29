@@ -15,7 +15,7 @@ export class AlbumUseCases {
     return this.dataServices.album.getAll();
   }
 
-  getAlbumById(id: any): Promise<Album> {
+  getAlbumById(id: string): Promise<Album> {
     return this.dataServices.album.get(id);
   }
 

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put, HttpCode } from '@nestjs/common';
-import { CreateTrackDto, UpdateTrackDto } from '../core/dtos';
+import { CreateTrackDto, UpdateTrackDto, CheckParam } from '../core/dtos';
 import { TrackUseCases } from '../use-cases/track/track.use-case';
 
 @Controller('track')
@@ -14,8 +14,8 @@ export class TrackController {
 
   @Get(':id')
   @HttpCode(200)
-  async getById(@Param('id') trackId: string) {
-    return this.trackUseCases.getTrackById(trackId);
+  async getById(@Param() param: CheckParam) {
+    return this.trackUseCases.getTrackById(param as unknown as string);
   }
 
   @Post()
@@ -27,9 +27,9 @@ export class TrackController {
   @Put(':id')
   @HttpCode(200)
   updateTrack(
-    @Param('id') trackId: string,
+    @Param() param: CheckParam,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    return this.trackUseCases.updateTrack(trackId, updateTrackDto);
+    return this.trackUseCases.updateTrack(param as unknown as string, updateTrackDto);
   }
 }

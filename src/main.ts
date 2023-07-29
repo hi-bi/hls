@@ -1,17 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { dirname, join } from 'node:path';
 import { writeFileSync } from 'node:fs';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
   const appPort: number = parseInt(process.env.PORT || '4000');
   
-  console.log('port: ', appPort, process.env.PORT)
-
   const app = await NestFactory.create(AppModule);
-
+  
+  app.useGlobalPipes(new ValidationPipe());
   
   const options = new DocumentBuilder()
     .setTitle("Home Library Service")

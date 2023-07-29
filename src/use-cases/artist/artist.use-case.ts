@@ -15,7 +15,7 @@ export class ArtistUseCases {
     return this.dataServices.artist.getAll();
   }
 
-  getArtistById(id: any): Promise<Artist> {
+  getArtistById(id: string): Promise<Artist> {
     return this.dataServices.artist.get(id);
   }
 

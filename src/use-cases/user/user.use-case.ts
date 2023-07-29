@@ -16,7 +16,7 @@ export class UserUseCases {
     return this.dataServices.user.getAll();
   }
 
-  getUserById(id: any): Promise<User> {
+  getUserById(id: string): Promise<User> {
     return this.dataServices.user.get(id);
   }
 

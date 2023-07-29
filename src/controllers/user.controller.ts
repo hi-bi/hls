@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put, HttpCode } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from '../core/dtos';
+import { CreateUserDto, UpdateUserDto, CheckParam } from '../core/dtos';
 import { UserUseCases } from '../use-cases/user/user.use-case';
 
 @Controller('user')
@@ -14,8 +14,8 @@ export class UserController {
 
   @Get(':id')
   @HttpCode(200)
-  async getById(@Param('id') userId: string) {
-    return this.userUseCases.getUserById(userId);
+  async getById(@Param() param: CheckParam) {
+    return this.userUseCases.getUserById(param as unknown as string);
   }
 
   @HttpCode(201)
@@ -27,9 +27,9 @@ export class UserController {
   @HttpCode(200)
   @Put(':id')
   updateUser(
-    @Param('id') userId: string,
+    @Param() param: CheckParam,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userUseCases.updateUser(userId, updateUserDto);
+    return this.userUseCases.updateUser(param as unknown as string, updateUserDto);
   }
 }
