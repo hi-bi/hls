@@ -1,5 +1,6 @@
 import { IGenericRepository } from '../../../core';
 import { Artist } from '../../../core';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 export class MemoryArtistRepository<T> implements IGenericRepository<T> {
     
@@ -7,29 +8,50 @@ export class MemoryArtistRepository<T> implements IGenericRepository<T> {
 
     constructor() {
         this._repository = new Map();
-    }
+        
+    };
     
     getAll(): Promise<T[]> {
-        const allRec = Array.from(this._repository.values());
-        return Promise.resolve(allRec);
-//        throw new Error('Method not implemented.');
-    }
+        return new Promise ((resolve, reject) => {
+            const allRec = Array.from(this._repository.values());
+            resolve(allRec);
+        })
+    };
+
     get(id: string): Promise<T> {
+        return new Promise ((resolve, reject) => {
+            const artist = this._repository.get(id);
 
-        throw new Error('Method not implemented.');
-    }
+            if (artist) resolve(artist);
+            else reject(new NotFoundException('Artist was not found'));
+        })
+    };
+
     create(item: T): Promise<T> {
-        const artist = item as unknown as Artist;
-        console.log('repository create artist: ', artist)
+        return new Promise ((resolve, reject) => {
+            const artist = item as unknown as Artist;
+            console.log('repository create artist: ', artist)
+            
+            reject(new NotFoundException('Method not implemented.'))
+            
+        })
+    };
 
-        throw new Error('Method not implemented.');
-    }
-    update(id: string, item: T) {
-        const artist = item as unknown as Artist;
-        throw new Error('Method not implemented.');
-    }
+    update(id: string, item: T): Promise<T> {
+        return new Promise ((resolve, reject) => {
+            const artist = item as unknown as Artist;
+            
+            reject(new NotFoundException('Method not implemented.'))
+            
+        })
+    };
+
     delete(id: string) {
-        throw new Error('Method not implemented.');
-    }
+        return new Promise ((resolve, reject) => {
+            
+            reject(new NotFoundException('Method not implemented.'))
+            
+        })
+    };
     
 }

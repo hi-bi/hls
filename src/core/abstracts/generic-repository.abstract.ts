@@ -5,9 +5,9 @@ export abstract class IGenericRepository<T> {
   
     abstract create(item: T): Promise<T>;
   
-    abstract update(id: string, item: T);
+    abstract update(id: string, item: T): Promise<T>;
 
-    abstract delete(id: string);
+    abstract delete(id: string): any;
 }
 
 export abstract class IGenericFavoritesRepository<T> {
@@ -15,13 +15,13 @@ export abstract class IGenericFavoritesRepository<T> {
   
     abstract addTrack(item: T): Promise<T>;
   
-    abstract deleteTrack(id: string);
+    abstract deleteTrack(id: string): any;
 
     abstract addAlbum(item: T): Promise<T>;
   
-    abstract deleteAlbum(id: string);
+    abstract deleteAlbum(id: string): any;
 
     abstract addArtist(item: T): Promise<T>;
   
-    abstract deleteArtist(id: string);
+    abstract deleteArtist(id: string): any;
 }

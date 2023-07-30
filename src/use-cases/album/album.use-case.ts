@@ -12,23 +12,40 @@ export class AlbumUseCases {
   ) {}
 
   getAllAlbums(): Promise<Album[]> {
-    return this.dataServices.album.getAll();
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.album.getAll()); 
+    })
   }
 
   getAlbumById(id: string): Promise<Album> {
-    return this.dataServices.album.get(id);
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.album.get(id)); 
+    })
   }
 
   createAlbum(createAlbumDto: CreateAlbumDto): Promise<Album> {
-    const album = this.albumFactoryService.createNewAlbum(createAlbumDto);
-    return this.dataServices.album.create(album);
+    return new Promise ((resolve, reject) => {
+      const album = this.albumFactoryService.createNewAlbum(createAlbumDto);
+      resolve( this.dataServices.album.create(album));
+    })
   }
 
   updateAlbum(
     albumId: string,
     updateAlbumDto: UpdateAlbumDto,
   ): Promise<Album> {
-    const album = this.albumFactoryService.updateAlbum(updateAlbumDto);
-    return this.dataServices.album.update(albumId, album);
+    return new Promise ((resolve, reject) => {
+      const album = this.albumFactoryService.updateAlbum(updateAlbumDto);
+      resolve( this.dataServices.album.update(albumId, album));
+  })
+}
+
+  deleteAlbum(
+    albumId: string,
+  ): Promise<Album> {
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.album.delete(albumId));
+    })
   }
+
 }
