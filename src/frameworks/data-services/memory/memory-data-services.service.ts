@@ -31,6 +31,7 @@ export class MemoryDataServices
         this.track._service = this;
         
         this.user = new MemoryUserRepository<User>;
+        this.user._service = this;
         
     }
   }

@@ -54,11 +54,9 @@ export class MemoryArtistRepository<T> implements IGenericRepository<T> {
 
             })
             .catch( error => {
-                console.log('Artist not exists')
                 reject( new NotFoundException('Artist with id does not exist'));
 
             })
-    
         })
     };
 

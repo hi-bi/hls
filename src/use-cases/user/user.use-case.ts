@@ -12,24 +12,40 @@ export class UserUseCases {
   ) {}
 
   getAllUsers(): Promise<User[]> {
-    console.log(this.dataServices)
-    return this.dataServices.user.getAll();
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.user.getAll()); 
+    })
   }
 
   getUserById(id: string): Promise<User> {
-    return this.dataServices.user.get(id);
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.user.get(id)); 
+    })
   }
 
   createUser(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.userFactoryService.createNewUser(createUserDto);
-    return this.dataServices.user.create(user);
+    return new Promise ((resolve, reject) => {
+      const user = this.userFactoryService.createNewUser(createUserDto);
+      resolve( this.dataServices.user.create(user));
+    })
   }
 
   updateUser(
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    const user = this.userFactoryService.updateUser(updateUserDto);
-    return this.dataServices.user.update(userId, user);
+    return new Promise ((resolve, reject) => {
+      const user = this.userFactoryService.updateUser(updateUserDto);
+      resolve( this.dataServices.user.update(userId, user));
+    })
   }
+
+  deleteUser(
+    userId: string,
+  ): Promise<User> {
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.user.delete(userId));
+    })
+  }
+
 }
