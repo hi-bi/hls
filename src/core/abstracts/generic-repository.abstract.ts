@@ -11,17 +11,17 @@ export abstract class IGenericRepository<T> {
 }
 
 export abstract class IGenericFavoritesRepository<T> {
-    abstract getAll(): Promise<T[]>;
+    abstract getAll(): Promise<T>;
   
-    abstract addTrack(item: T): Promise<T>;
+    abstract addTrack(id: string): any;
   
     abstract deleteTrack(id: string): any;
 
-    abstract addAlbum(item: T): Promise<T>;
+    abstract addAlbum(id: string): any;
   
     abstract deleteAlbum(id: string): any;
 
-    abstract addArtist(item: T): Promise<T>;
+    abstract addArtist(id: string): any;
   
     abstract deleteArtist(id: string): any;
 }

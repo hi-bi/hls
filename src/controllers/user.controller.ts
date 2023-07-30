@@ -77,7 +77,7 @@ export class UserController {
   @ApiResponse({
     status: 400,
     description: 'Bad request. Body does not contain required fields',
-  })
+  })  
   createUser(@Body() userDto: CreateUserDto) {
     return this.userUseCases.createUser(userDto);
   }
