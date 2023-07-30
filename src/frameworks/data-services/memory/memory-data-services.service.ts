@@ -28,6 +28,7 @@ export class MemoryDataServices
         this.artist._service = this;
         
         this.track = new MemoryTrackRepository<Track>;
+        this.track._service = this;
         
         this.user = new MemoryUserRepository<User>;
         

@@ -147,4 +147,5 @@ export class AlbumController {
   ) {
     return this.albumUseCases.deleteAlbum(param.id as unknown as string);
   }
+
 }

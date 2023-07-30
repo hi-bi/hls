@@ -37,8 +37,8 @@ export class AlbumUseCases {
     return new Promise ((resolve, reject) => {
       const album = this.albumFactoryService.updateAlbum(updateAlbumDto);
       resolve( this.dataServices.album.update(albumId, album));
-  })
-}
+    })
+  }
 
   deleteAlbum(
     albumId: string,

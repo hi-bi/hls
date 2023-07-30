@@ -12,23 +12,40 @@ export class TrackUseCases {
   ) {}
 
   getAllTracks(): Promise<Track[]> {
-    return this.dataServices.track.getAll();
+    return new Promise ((resolve, reject) => {
+      resolve( this.dataServices.track.getAll()); 
+    })
   }
 
   getTrackById(id: string): Promise<Track> {
-    return this.dataServices.track.get(id);
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.track.get(id)); 
+    })
   }
 
   createTrack(createTrackDto: CreateTrackDto): Promise<Track> {
-    const album = this.trackFactoryService.createNewTrack(createTrackDto);
-    return this.dataServices.track.create(album);
+    return new Promise ((resolve, reject) => {
+      const track = this.trackFactoryService.createNewTrack(createTrackDto);
+      resolve( this.dataServices.track.create(track));
+    })
   }
 
   updateTrack(
     trackId: string,
     updateTrackDto: UpdateTrackDto,
   ): Promise<Track> {
-    const track = this.trackFactoryService.updateTrack(updateTrackDto);
-    return this.dataServices.track.update(trackId, track);
+    return new Promise ((resolve, reject) => {
+      const track = this.trackFactoryService.updateTrack(updateTrackDto);
+      resolve( this.dataServices.track.update(trackId, track));
+    })
   }
+
+  deleteTrack(
+    trackId: string,
+  ): Promise<Track> {
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.track.delete(trackId));
+    })
+  }
+
 }
