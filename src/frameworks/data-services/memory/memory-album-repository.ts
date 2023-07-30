@@ -18,7 +18,8 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
             const allRec = Array.from(this._repository.values());
             resolve(allRec);
         })
-    }
+    };
+
     get(id: string): Promise<T> {
         return new Promise ((resolve, reject) => {
             const album = this._repository.get(id);
@@ -26,7 +27,8 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
             if (album) resolve(album);
             else reject(new NotFoundException('Album was not found'));
         })
-    }
+    };
+
     create(item: T): Promise<T> {
         return new Promise ((resolve, reject) => {
             const album = item as unknown as Album;
@@ -64,7 +66,8 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
     
             }  
         })
-    }
+    };
+
     update(id: string, item: T): Promise<T> {
         return new Promise ((resolve, reject) => {
             this.get(id)
@@ -83,10 +86,9 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
                         } else {
                             repArtist.get(artistId)
                             .then( () => {
-                                newAlbum.id = v4();
+                                newAlbum.id = id;
                                 this._repository.set(newAlbum.id, item);
                         
-                                console.log('result: ', album, item)
                                 resolve(item);
                             })
                             .catch( error => {
@@ -102,19 +104,15 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
                         resolve(item);
                     }
                 }  
-//                console.log('Album exists')
-
-//                resolve(item);
-
             })
             .catch( error => {
-                console.log('Album not exists')
                 reject( new NotFoundException('Album with id does not exist'));
 
             })
     
         })
-    }
+    };
+
     delete(id: string) {
         return new Promise ((resolve, reject) => {
             const res = this._repository.delete(id);
@@ -124,6 +122,6 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
             else reject( new NotFoundException('Album was not found'));
     
         })
-    }
+    };
     
 }

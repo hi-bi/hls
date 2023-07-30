@@ -12,23 +12,40 @@ export class ArtistUseCases {
   ) {}
 
   getAllArtists(): Promise<Artist[]> {
-    return this.dataServices.artist.getAll();
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.artist.getAll()); 
+    })
   }
 
   getArtistById(id: string): Promise<Artist> {
-    return this.dataServices.artist.get(id);
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.artist.get(id)); 
+    })
   }
 
   createArtist(createArtistDto: CreateArtistDto): Promise<Artist> {
-    const artist = this.artistFactoryService.createNewArtist(createArtistDto);
-    return this.dataServices.artist.create(artist);
+    return new Promise ((resolve, reject) => {
+      const artist = this.artistFactoryService.createNewArtist(createArtistDto);
+      resolve( this.dataServices.artist.create(artist));
+    })
   }
 
   updateArtist(
     artistId: string,
     updateArtistDto: UpdateArtistDto,
   ): Promise<Artist> {
-    const artist = this.artistFactoryService.updateArtist(updateArtistDto);
-    return this.dataServices.artist.update(artistId,artist);
+    return new Promise ((resolve, reject) => {
+      const artist = this.artistFactoryService.updateArtist(updateArtistDto);
+      resolve( this.dataServices.artist.update(artistId,artist));
+    })
   }
+
+  deleteArtist(
+    artistId: string,
+  ): Promise<Artist> {
+    return new Promise ((resolve, reject) => {
+      resolve(this.dataServices.artist.delete(artistId));
+    })
+  }
+
 }

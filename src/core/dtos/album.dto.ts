@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsNumber, IsUUID, IsOptional, isUUID } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAlbumDto {
 
@@ -12,7 +12,7 @@ export class CreateAlbumDto {
     name: string;
 
     @ApiProperty({
-        type: String,
+        type: Number,
         description: 'Album year',
       })
     @IsNumber()

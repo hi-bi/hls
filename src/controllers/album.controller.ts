@@ -57,7 +57,6 @@ export class AlbumController {
     description: 'Album was not found',
   })
   async getById(@Param() param: CheckParam) {
-    console.log('get id: ', param.id);
     return this.albumUseCases.getAlbumById(param.id as unknown as string);
   }
 
@@ -82,9 +81,9 @@ export class AlbumController {
     description: 'Bad request. Body does not contain required fields or Artist was not found',
   })
   createAlbum(@Body() albumDto: CreateAlbumDto) {
-    console.log('createAlbum(@Body() albumDto: any): ', albumDto)
     return this.albumUseCases.createAlbum(albumDto);
   }
+
 
   @ApiParam({
     name: 'id',
@@ -121,6 +120,7 @@ export class AlbumController {
   ) {
     return this.albumUseCases.updateAlbum(param.id as unknown as string, updateAlbumDto);
   }
+
 
   @ApiParam({
     name: 'id',
