@@ -74,8 +74,7 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
 
             if (artistId != null) {
                 repArtist.get(artistId)
-                .then( () => {
-                })    
+                .then()    
                 .catch( error => {
                     reject( new BadRequestException('Artist was not found'));
                 }) 
@@ -83,8 +82,7 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
 
             if (albumId != null) {
                 repAlbum.get(albumId)
-                .then( () => {
-                })    
+                .then()    
                 .catch( error => {
                     reject( new BadRequestException('Album was not found'));
                 }) 
@@ -146,8 +144,7 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
 
                 if (artistId != null) {
                     repArtist.get(artistId)
-                    .then( () => {
-                    })    
+                    .then()    
                     .catch( error => {
                         reject( new BadRequestException('Artist was not found'));
                     }) 
@@ -155,8 +152,7 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
     
                 if (albumId != null) {
                     repAlbum.get(albumId)
-                    .then( () => {
-                    })    
+                    .then()    
                     .catch( error => {
                         reject( new BadRequestException('Album was not found'));
                     }) 
@@ -182,11 +178,11 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
             if (res) {
                 this._service.favorites.deleteTrack(id)
                 .then( (track) => {
-                    console.log('delete track from favorites: ', id, track)
+//                    console.log('delete track from favorites: ', id, track)
                     resolve(res);
                 })
                 .catch( (error) => {
-                    console.log('not found track in favorites: ', id, error)
+//                    console.log('not found track in favorites: ', id, error)
                     resolve(res);
                 })
             }
@@ -203,7 +199,7 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
                     item.artistId = null;
                 }
             })
-            console.log('Track delete author link: ', id)
+//            console.log('Track delete author link: ', id)
             resolve(true);
         })
     }
@@ -216,7 +212,7 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
                     item.albumId = null;
                 }
             })
-            console.log('Track delete album link: ', id)
+//            console.log('Track delete album link: ', id)
             resolve(true);
         })
     }

@@ -48,7 +48,6 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
                             album.id = v4();
                             this._repository.set(album.id, item);
                     
-                            console.log('result: ', album, item)
                             resolve(item);
                         })
                         .catch( error => {
@@ -60,7 +59,6 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
                     album.id = v4();
                     this._repository.set(album.id, item);
             
-                    console.log('result: ', album, item)
                     resolve(item);
                 }
     
@@ -100,7 +98,6 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
                         newAlbum.id = id;
                         this._repository.set(newAlbum.id, item);
                 
-                        console.log('result: ', newAlbum, album)
                         resolve(item);
                     }
                 }  
@@ -119,17 +116,16 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
             if (res) {
                 this._service.track.deleteLinkToAlbum(id)
                 .then( (res) => {
-                    console.log('Album delete track reference: ', id, res)
+                    const next = res;
+//                    console.log('Album delete track reference: ', id, res)
                 })
 
                 this._service.favorites.deleteAlbum(id)
                 .then( (track) => {
-                    console.log('delete album from favorites: ', id, track)
-//                    resolve(res);
+                    resolve(res);
                 })
                 .catch( (error) => {
-                    console.log('not found album in favorites: ', id, error)
-//                    resolve(res);
+                    resolve(res);
                 })
 
                 resolve(res);
@@ -148,7 +144,7 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
                     item.artistId = null;
                 }
             })
-            console.log('Album delete author link: ', id)
+//            console.log('Album delete author link: ', id)
             resolve(true);
         })
     };

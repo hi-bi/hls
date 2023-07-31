@@ -1,8 +1,8 @@
 import { IGenericRepository } from '../../../core';
 import { User } from '../../../core';
 import { MemoryDataServices } from './memory-data-services.service';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { v4, validate } from 'uuid';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { v4 } from 'uuid';
 
 export class MemoryUserRepository<T> implements IGenericRepository<T> {
     
@@ -52,13 +52,22 @@ export class MemoryUserRepository<T> implements IGenericRepository<T> {
             .then( user => {
 
                 const newUser = item as unknown as User;
+
+                const oldUser = user as unknown as User;
+
+//                console.log('Update user: ', oldUser, newUser);
+
+                if (oldUser.password != newUser.password) {
+                    reject( new ForbiddenException('oldPassword is wrong'));
+                }
+
                 newUser.id = id;
                 newUser.version ++;
                 newUser.updatedAt = new Date().getTime();
 
                 this._repository.set(newUser.id, item);
         
-                delete newUser.password;
+                //delete newUser.password;
 
                 resolve(item);
 

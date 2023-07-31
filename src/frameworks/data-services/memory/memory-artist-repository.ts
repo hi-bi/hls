@@ -1,8 +1,8 @@
 import { IGenericRepository } from '../../../core';
 import { Artist } from '../../../core';
 import { MemoryDataServices } from './memory-data-services.service';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { v4, validate } from 'uuid';
+import { NotFoundException } from '@nestjs/common';
+import { v4 } from 'uuid';
 
 export class MemoryArtistRepository<T> implements IGenericRepository<T> {
     
@@ -67,22 +67,24 @@ export class MemoryArtistRepository<T> implements IGenericRepository<T> {
 
                 this._service.track.deleteLinkToArtist(id)
                 .then( (res) => {
-                    console.log('Artist delete track reference: ', id, res)
+                    const next = res;
+//                    console.log('Artist delete track reference: ', id, res)
                 })
 
                 this._service.album.deleteLinkToArtist(id)
                 .then( (res) => {
-                    console.log('Artist delete album reference: ', id, res)
+                    const next = res;
+//                    console.log('Artist delete album reference: ', id, res)
                 })
 
                 this._service.favorites.deleteArtist(id)
                 .then( (artist) => {
-                    console.log('delete artist from favorites: ', id, artist)
-//                    resolve(res);
+                    const next = res;
+//                    console.log('delete artist from favorites: ', id, artist)
                 })
                 .catch( (error) => {
-                    console.log('not found artist in favorites: ', id, error)
-//                    resolve(res);
+                    const next = res;
+//                    console.log('not found artist in favorites: ', id)
                 })
 
                 resolve(res);

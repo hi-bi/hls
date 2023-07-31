@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete } from '@nestjs/common';
 import { CreateAlbumDto, UpdateAlbumDto, CheckParam } from '../core/dtos';
 import { AlbumUseCases } from '../use-cases/album/album.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';

@@ -1,5 +1,4 @@
-import { Controller, Get, Param, Res, Post, Body, Put, HttpCode, Delete, Req,
-  HttpException, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param, Res, Post, HttpCode, Delete, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
 import { CheckParam } from '../core/dtos';
 import { FavoritesUseCases } from '../use-cases/favorites/favorites.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
@@ -127,28 +126,20 @@ export class FavoritesController {
   addFavsTrack(@Param('id', new ParseUUIDPipe({version: '4'})) id: string, @Res() response: Response) {
 //  addFavsTrack(@Param() param1, @Res() response: Response) {
     
-    console.log('POST track/:id: ', id)
-    let Resp: any; 
     this.favoritesUseCases.addFavsTrack( id as unknown as string)
     .then( (res) => {
 
-      console.log('POST track/:id res: ', res);
-      Resp = res
       response
         .status(HttpStatus.CREATED)
-        .send(JSON.stringify('Track with id === trackId does not exist'));
+        .send(JSON.stringify(''));
       
     })
     .catch( (error) => {
-      console.log('POST track/:id err: ', error);
+
       response
         .status(HttpStatus.UNPROCESSABLE_ENTITY)
         .send(JSON.stringify('Track with id === trackId does not exist'));
-
-//      throw new HttpException('Track with id === trackId does not exist', HttpStatus.UNPROCESSABLE_ENTITY);
     })
-    
-//    return;
   }
 
 

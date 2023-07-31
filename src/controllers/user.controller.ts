@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, HttpStatus, HttpException } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, CheckParam } from '../core/dtos';
 import { UserUseCases } from '../use-cases/user/user.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { response } from 'express';
 
 @ApiTags('user')
 @Controller('user')
@@ -115,7 +116,29 @@ export class UserController {
     @Param() param: CheckParam,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userUseCases.updateUser(param.id as unknown as string, updateUserDto);
+  
+    return this.userUseCases.updateUser(param.id as unknown as string, updateUserDto)
+/*
+    .then( (res) => {
+
+      response
+        .status(HttpStatus.OK)
+        .send(JSON.stringify(res));
+      
+    })
+    .catch( (error) => {
+
+      const err =  error as undefined as HttpException;
+
+      if (err.getStatus() == 403 ) {
+        response
+        .status(HttpStatus.OK)
+        .send(JSON.stringify('oldPassword is wrong'));
+      }
+
+
+    })
+*/
   }
 
   @ApiParam({

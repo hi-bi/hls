@@ -1,11 +1,9 @@
     import { IGenericFavoritesRepository } from '../../../core';
-    import { Favorites } from '../../../core';
     import { Artist } from '../../../core';
     import { Album } from '../../../core';
     import { Track } from '../../../core';
     import { MemoryDataServices } from './memory-data-services.service';
-    import { BadRequestException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-    import { v4, validate } from 'uuid';
+    import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 
     export class MemoryFavoritesRepository<T> implements IGenericFavoritesRepository<T> {
         
@@ -33,9 +31,7 @@
                     .then( (artist) => {
                         artists.push(artist as unknown as Artist);
                     })
-                    .catch((error) => {
-                        console.log('getFavArtist: ', value);
-                    })
+                    .catch()
                 })
 
                 this._repositoryAlbum.forEach((value, key) => {
@@ -43,9 +39,7 @@
                     .then( (album) => {
                         albums.push(album as unknown as Album);
                     })
-                    .catch((error) => {
-                        console.log('getFavAlbum: ', value);
-                    })
+                    .catch()
                 })
 
                 this._repositoryTrack.forEach((value, key) => {
@@ -53,9 +47,7 @@
                     .then( (track) => {
                         tracks.push(track as unknown as Track);
                     })
-                    .catch((error) => {
-                        console.log('getFavTrack: ', value);
-                    })
+                    .catch()
                 })
 
                 const favorites = {
@@ -120,10 +112,9 @@
 
         addTrack(id: string): Promise<any> {
             return new Promise ((resolve, reject) => {
-                console.log('addTrack___')
+
                 this._service.track.get(id)
                 .then( (track) => {
-                    console.log('setFavTrack: ', id, track);
                     this._repositoryTrack.set(id, id);
                     resolve(true as unknown as any);
                 })
