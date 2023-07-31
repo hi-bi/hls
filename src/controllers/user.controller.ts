@@ -109,6 +109,10 @@ export class UserController {
     description: 'Bad request. Body does not contain required fields',
   })
   @ApiResponse({
+    status: 403,
+    description: 'oldPassword is wrong',
+  })
+  @ApiResponse({
     status: 404,
     description: 'Record with id === userId does not exist',
   })
