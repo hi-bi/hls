@@ -72,24 +72,28 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
             const repArtist = this._service.artist;
             const repAlbum = this._service.album;
 
-            repArtist.get(artistId)
-            .then( () => {
+            if (artistId != null) {
+                repArtist.get(artistId)
+                .then( () => {
+                })    
+                .catch( error => {
+                    reject( new BadRequestException('Artist was not found'));
+                }) 
+            }
+
+            if (albumId != null) {
                 repAlbum.get(albumId)
-                .then ( () => {
-                    track.id = v4();
-                    this._repository.set(track.id, item);
-            
-                    resolve(item);
-                })
+                .then( () => {
+                })    
                 .catch( error => {
                     reject( new BadRequestException('Album was not found'));
-                })
+                }) 
+            }
 
-
-            })
-            .catch( error => {
-                reject( new BadRequestException('Artist was not found'));
-            }) 
+            track.id = v4();
+            this._repository.set(track.id, item);
+    
+            resolve(item);
 
         })
     }
@@ -139,25 +143,29 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
     
                 const repArtist = this._service.artist;
                 const repAlbum = this._service.album;
+
+                if (artistId != null) {
+                    repArtist.get(artistId)
+                    .then( () => {
+                    })    
+                    .catch( error => {
+                        reject( new BadRequestException('Artist was not found'));
+                    }) 
+                }
     
-                repArtist.get(artistId)
-                .then( () => {
+                if (albumId != null) {
                     repAlbum.get(albumId)
-                    .then ( () => {
-                        newTrack.id = id;
-                        this._repository.set(newTrack.id, item);
-                
-                        resolve(item);
-                    })
+                    .then( () => {
+                    })    
                     .catch( error => {
                         reject( new BadRequestException('Album was not found'));
-                    })
+                    }) 
+                }
     
-    
-                })
-                .catch( error => {
-                    reject( new BadRequestException('Artist was not found'));
-                }) 
+                newTrack.id = id;
+                this._repository.set(newTrack.id, item);
+        
+                resolve(item);
 
             })
             .catch( error => {
@@ -172,11 +180,44 @@ export class MemoryTrackRepository<T> implements IGenericRepository<T> {
         return new Promise ((resolve, reject) => {
             const res = this._repository.delete(id);
             if (res) {
-                resolve(res);
+                this._service.favorites.deleteTrack(id)
+                .then( (track) => {
+                    console.log('delete track from favorites: ', id, track)
+                    resolve(res);
+                })
+                .catch( (error) => {
+                    console.log('not found track in favorites: ', id, error)
+                    resolve(res);
+                })
             }
             else reject( new NotFoundException('Track was not found'));
     
         })
     }
 
+    deleteLinkToArtist(id: string): Promise<any> {
+        return new Promise ((resolve, reject) => {
+            this._repository.forEach((value, key) => {
+                const item = value as unknown as Track
+                if (item.artistId == id) {
+                    item.artistId = null;
+                }
+            })
+            console.log('Track delete author link: ', id)
+            resolve(true);
+        })
+    }
+
+    deleteLinkToAlbum(id: string): Promise<any> {
+        return new Promise ((resolve, reject) => {
+            this._repository.forEach((value, key) => {
+                const item = value as unknown as Track
+                if (item.albumId == id) {
+                    item.albumId = null;
+                }
+            })
+            console.log('Track delete album link: ', id)
+            resolve(true);
+        })
+    }
 }

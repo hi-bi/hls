@@ -22,7 +22,7 @@ export class ArtistController {
 
     }  
   })
-  async getAll() {
+  getAll() {
     return this.artistUseCases.getAllArtists();
   }
 
@@ -56,7 +56,7 @@ export class ArtistController {
     status: 404,
     description: 'Artist was not found',
   })
-  async getById(@Param() param: CheckParam) {
+  getById(@Param() param: CheckParam) {
     return this.artistUseCases.getArtistById(param.id as unknown as string);
   }
 

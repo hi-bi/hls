@@ -22,7 +22,7 @@ export class UserController {
 
     }  
   })
-  async getAll() {
+  getAll() {
     return this.userUseCases.getAllUsers();
   }
 
@@ -55,7 +55,7 @@ export class UserController {
     status: 404,
     description: 'User was not found',
   })
-  async getById(@Param() param: CheckParam) {
+  getById(@Param() param: CheckParam) {
     return this.userUseCases.getUserById(param.id as unknown as string);
   }
 

@@ -117,10 +117,39 @@ export class MemoryAlbumRepository<T> implements IGenericRepository<T> {
         return new Promise ((resolve, reject) => {
             const res = this._repository.delete(id);
             if (res) {
+                this._service.track.deleteLinkToAlbum(id)
+                .then( (res) => {
+                    console.log('Album delete track reference: ', id, res)
+                })
+
+                this._service.favorites.deleteAlbum(id)
+                .then( (track) => {
+                    console.log('delete album from favorites: ', id, track)
+//                    resolve(res);
+                })
+                .catch( (error) => {
+                    console.log('not found album in favorites: ', id, error)
+//                    resolve(res);
+                })
+
                 resolve(res);
+
             }
             else reject( new NotFoundException('Album was not found'));
     
+        })
+    };
+
+    deleteLinkToArtist(id: string): Promise<any> {
+        return new Promise ((resolve, reject) => {
+            this._repository.forEach((value, key) => {
+                const item = value as unknown as Album
+                if (item.artistId == id) {
+                    item.artistId = null;
+                }
+            })
+            console.log('Album delete author link: ', id)
+            resolve(true);
         })
     };
     

@@ -64,6 +64,27 @@ export class MemoryArtistRepository<T> implements IGenericRepository<T> {
         return new Promise ((resolve, reject) => {
             const res = this._repository.delete(id);
             if (res) {
+
+                this._service.track.deleteLinkToArtist(id)
+                .then( (res) => {
+                    console.log('Artist delete track reference: ', id, res)
+                })
+
+                this._service.album.deleteLinkToArtist(id)
+                .then( (res) => {
+                    console.log('Artist delete album reference: ', id, res)
+                })
+
+                this._service.favorites.deleteArtist(id)
+                .then( (artist) => {
+                    console.log('delete artist from favorites: ', id, artist)
+//                    resolve(res);
+                })
+                .catch( (error) => {
+                    console.log('not found artist in favorites: ', id, error)
+//                    resolve(res);
+                })
+
                 resolve(res);
             }
             else reject( new NotFoundException('Artist was not found'));

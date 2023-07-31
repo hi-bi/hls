@@ -22,7 +22,7 @@ export class TrackController {
 
     }  
   })
-  async getAll() {
+  getAll() {
     return this.trackUseCases.getAllTracks();
   }
 
@@ -56,7 +56,7 @@ export class TrackController {
     status: 404,
     description: 'Track was not found',
   })
-  async getById(@Param() param: CheckParam) {
+  getById(@Param() param: CheckParam) {
     return this.trackUseCases.getTrackById(param.id as unknown as string);
   }
   
@@ -81,7 +81,9 @@ export class TrackController {
     description: 'Bad request. Body does not contain required fields or Artist or Album were not found',
   })
   createTrack(@Body() trackDto: CreateTrackDto) {
+
     return this.trackUseCases.createTrack(trackDto);
+  
   }
 
 

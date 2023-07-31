@@ -22,7 +22,7 @@ export class AlbumController {
 
     }  
   })
-  async getAll() {
+  getAll() {
     return this.albumUseCases.getAllAlbums();
   }
 
@@ -56,7 +56,7 @@ export class AlbumController {
     status: 404,
     description: 'Album was not found',
   })
-  async getById(@Param() param: CheckParam) {
+  getById(@Param() param: CheckParam) {
     return this.albumUseCases.getAlbumById(param.id as unknown as string);
   }
 
