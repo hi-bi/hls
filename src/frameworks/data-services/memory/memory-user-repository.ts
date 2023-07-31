@@ -1,5 +1,6 @@
 import { IGenericRepository } from '../../../core';
 import { User } from '../../../core';
+import { UpdateUserDto } from 'src/core/dtos';
 import { MemoryDataServices } from './memory-data-services.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { v4 } from 'uuid';
@@ -46,30 +47,38 @@ export class MemoryUserRepository<T> implements IGenericRepository<T> {
         })
     }
 
-    update(id: string, item: T): Promise<T> {
+    update(id: string, item: any): Promise<T> {
         return new Promise ((resolve, reject) => {
             this.get(id)
             .then( user => {
 
                 const newUser = item as unknown as User;
+                const nPassChange = newUser.password.indexOf(' ');
+                let newPassword = '';
+                let oldPassword = '';
 
+                if (nPassChange > 0) {
+                    newPassword = newUser.password.substring(0, nPassChange);
+                    oldPassword = newUser.password.substring(nPassChange+1);
+                }
+               
                 const oldUser = user as unknown as User;
 
-//                console.log('Update user: ', oldUser, newUser);
-
-                if (oldUser.password != newUser.password) {
+                if (oldUser.password != oldPassword) {
                     reject( new ForbiddenException('oldPassword is wrong'));
                 }
 
-                newUser.id = id;
-                newUser.version ++;
-                newUser.updatedAt = new Date().getTime();
+                oldUser.password = newPassword;
+                oldUser.version ++;
+                oldUser.updatedAt = new Date().getTime();
 
-                this._repository.set(newUser.id, item);
+                this._repository.set(oldUser.id, oldUser as unknown as T);
+
+                item = oldUser as unknown as T;
         
-                //delete newUser.password;
+                delete oldUser.password;
 
-                resolve(item);
+               resolve(item);
 
             })
             .catch( error => {

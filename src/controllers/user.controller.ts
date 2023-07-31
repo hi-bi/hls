@@ -122,27 +122,6 @@ export class UserController {
   ) {
   
     return this.userUseCases.updateUser(param.id as unknown as string, updateUserDto)
-/*
-    .then( (res) => {
-
-      response
-        .status(HttpStatus.OK)
-        .send(JSON.stringify(res));
-      
-    })
-    .catch( (error) => {
-
-      const err =  error as undefined as HttpException;
-
-      if (err.getStatus() == 403 ) {
-        response
-        .status(HttpStatus.OK)
-        .send(JSON.stringify('oldPassword is wrong'));
-      }
-
-
-    })
-*/
   }
 
   @ApiParam({

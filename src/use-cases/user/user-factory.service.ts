@@ -17,8 +17,8 @@ export class UserFactoryService {
 
   updateUser(updateUserDto: UpdateUserDto) {
     const newUser = new User();
-    newUser.password = updateUserDto.newPassword;
-    newUser.version ++;
+    newUser.password = updateUserDto.newPassword + ' ' + updateUserDto.oldPassword;
+    newUser.version;
     newUser.updatedAt = new Date().getTime();
 
     return newUser;
