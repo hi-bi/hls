@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
-import { IDataServices } from '../../../core';
 import { PrismaDataServices } from './prisma-data-services.service';
+import { PrismaService } from './prisma-client.service';
+import { PrismaAlbumRepository } from './prisma-album-repository';
 
 @Module({
   providers: [
-    {
-      provide: IDataServices,
-      useClass: PrismaDataServices,
-    },
+    PrismaService,
+    PrismaDataServices,
+    PrismaAlbumRepository
   ],
-  exports: [IDataServices],
+  exports: [
+    PrismaDataServices, 
+    PrismaAlbumRepository,
+    PrismaService
+  ],
 })
 export class PrismaDataServicesModule {}
