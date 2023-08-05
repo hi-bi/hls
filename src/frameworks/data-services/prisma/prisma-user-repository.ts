@@ -1,45 +1,55 @@
-import { IGenericRepository } from '../../../core';
-import { User } from '../../../core';
 import { UpdateUserDto } from 'src/core/dtos';
 import { PrismaDataServices } from './prisma-data-services.service';
+import { PrismaService } from './prisma-client.service';
+import { User } from '@prisma/client' 
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-export class PrismaUserRepository<T> implements IGenericRepository<T> {
+export class PrismaUserRepository {
     
-    private _repository:  Map<string, T>;
     public _service: PrismaDataServices;
 
-    constructor() {
-        this._repository = new Map();
-    }
+    constructor(private prisma: PrismaService) {}
     
-    getAll(): Promise<T[]> {
+    getAll(): Promise<User[]> {
         return new Promise ((resolve, reject) => {
-            const allRec = Array.from(this._repository.values());
+            const allRec =  this.prisma.user.findMany()
             resolve(allRec);
         })
     }
 
-    get(id: string): Promise<T> {
+    get(id: string): Promise<User> {
         return new Promise ((resolve, reject) => {
-            const user = this._repository.get(id);
+            const user = this.prisma.user.findUnique({
+                where: {
+                    id: id,
+                }
+            });
 
             if (user) resolve(user);
             else reject(new NotFoundException('User was not found'));
         })
     }
 
-    create(item: T): Promise<T> {
+    create(item: User): Promise<User> {
         return new Promise ((resolve, reject) => {
-            const user = item as unknown as User;
+            const user = item;
 
             user.id = v4();
             user.version = 1;
             user.createdAt = new Date().getTime();
             user.updatedAt = user.createdAt
 
-            this._repository.set(user.id, item);
+            this.prisma.user.create({
+                data: {
+                    id: user.id,
+                    login: user.login,
+                    password: user.password,
+                    version: user.version,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt,
+                }
+            })
 
             delete user.password;
             
@@ -47,7 +57,7 @@ export class PrismaUserRepository<T> implements IGenericRepository<T> {
         })
     }
 
-    update(id: string, item: any): Promise<T> {
+    update(id: string, item: any): Promise<User> {
         return new Promise ((resolve, reject) => {
             this.get(id)
             .then( user => {
@@ -72,9 +82,22 @@ export class PrismaUserRepository<T> implements IGenericRepository<T> {
                 oldUser.version ++;
                 oldUser.updatedAt = new Date().getTime();
 
-                this._repository.set(oldUser.id, oldUser as unknown as T);
+                this.prisma.user.update({
+                    where: {
+                        id: id,
+                    },
+                    data: {
+                        id: oldUser.id,
+                        password: oldUser.password,
+                        version: oldUser.version,
+                        updatedAt: oldUser.updatedAt
+                    }
+                })
 
-                item = oldUser as unknown as T;
+
+                //this._repository.set(oldUser.id, oldUser as unknown as T);
+
+                item = oldUser;
         
                 delete oldUser.password;
 
@@ -90,7 +113,12 @@ export class PrismaUserRepository<T> implements IGenericRepository<T> {
 
     delete(id: string) {
         return new Promise ((resolve, reject) => {
-            const res = this._repository.delete(id);
+            const res = this.prisma.user.delete({
+                where: {
+                    id: id,
+                },
+            })
+
             if (res) {
                 resolve(res);
             }

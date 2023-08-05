@@ -16,8 +16,8 @@
 
         album: PrismaAlbumRepository;
         artist: PrismaArtistRepository;
-        track: PrismaTrackRepository<Track>;
-        user: PrismaUserRepository<User>;
+        track: PrismaTrackRepository;
+        user: PrismaUserRepository;
         favorites: PrismaFavoritesRepository<Favorites>;
         
         constructor(){
@@ -34,10 +34,10 @@
             this.artist = new PrismaArtistRepository(this.prisma);
             this.artist._service = this;
             
-            this.track = new PrismaTrackRepository<Track>;
+            this.track = new PrismaTrackRepository(this.prisma);
             this.track._service = this;
             
-            this.user = new PrismaUserRepository<User>;
+            this.user = new PrismaUserRepository(this.prisma);
             this.user._service = this;
             
             this.favorites = new PrismaFavoritesRepository<Favorites>;

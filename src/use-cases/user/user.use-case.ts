@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../../core/entities';
-import { IDataServices } from '../../core/abstracts';
+import { PrismaDataServices } from 'src/frameworks/data-services/prisma/prisma-data-services.service';
 import { CreateUserDto, UpdateUserDto } from '../../core/dtos';
 import { UserFactoryService } from './user-factory.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserUseCases {
   constructor(
-    private dataServices: IDataServices,
+    private dataServices: PrismaDataServices,
     private userFactoryService: UserFactoryService,
   ) {}
 
@@ -42,7 +42,7 @@ export class UserUseCases {
 
   deleteUser(
     userId: string,
-  ): Promise<User> {
+  ): Promise<unknown> {
     return new Promise ((resolve, reject) => {
       resolve(this.dataServices.user.delete(userId));
     })

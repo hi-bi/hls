@@ -45,7 +45,7 @@ export class ArtistUseCases {
 
   deleteArtist(
     artistId: string,
-  ): Promise<Artist> {
+  ): Promise<unknown> {
     return new Promise ((resolve, reject) => {
       resolve( this.dataServices.artist.delete(artistId));
     })
