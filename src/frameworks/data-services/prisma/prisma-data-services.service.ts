@@ -1,5 +1,5 @@
     import { Injectable, OnApplicationBootstrap, OnModuleInit } from '@nestjs/common';
-    import { Artist, Track, User, Favorites } from '../../../core';
+    import { Track, User, Favorites } from '../../../core';
     import { PrismaAlbumRepository } from './prisma-album-repository';
     import { PrismaArtistRepository } from './prisma-artist-repository';
     import { PrismaTrackRepository } from './prisma-track-repository';
@@ -15,7 +15,7 @@
         prisma: PrismaService; 
 
         album: PrismaAlbumRepository;
-        artist: PrismaArtistRepository<Artist>;
+        artist: PrismaArtistRepository;
         track: PrismaTrackRepository<Track>;
         user: PrismaUserRepository<User>;
         favorites: PrismaFavoritesRepository<Favorites>;
@@ -25,10 +25,13 @@
         }
 
         async onApplicationBootstrap() {
+            this.prisma = new PrismaService;
+            console.log('PrismaDataServices class bootstrap: ', this.prisma)
+
             this.album = new PrismaAlbumRepository(this.prisma);
             this.album._service = this;
             
-            this.artist = new PrismaArtistRepository<Artist>;
+            this.artist = new PrismaArtistRepository(this.prisma);
             this.artist._service = this;
             
             this.track = new PrismaTrackRepository<Track>;

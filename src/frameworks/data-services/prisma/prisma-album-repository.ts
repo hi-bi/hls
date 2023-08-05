@@ -1,4 +1,3 @@
-//import { IGenericRepository } from '../../../core';
 import { PrismaDataServices } from './prisma-data-services.service';
 import { PrismaService } from './prisma-client.service';
 import { Album } from '@prisma/client' 
@@ -10,9 +9,7 @@ export class PrismaAlbumRepository {
     
     public _service: PrismaDataServices;
 
-    constructor(private prisma: PrismaService) {
-        
-    }
+    constructor(private prisma: PrismaService) {}
     
     getAll(): Promise<Album[]> {
         return new Promise ((resolve, reject) => {

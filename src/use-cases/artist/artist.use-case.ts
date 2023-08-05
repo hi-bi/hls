@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Artist } from '../../core/entities';
-import { IDataServices } from '../../core/abstracts';
+//import { Artist } from '../../core/entities';
+//import { IDataServices } from '../../core/abstracts';
+import { PrismaDataServices } from 'src/frameworks/data-services/prisma/prisma-data-services.service';
 import { CreateArtistDto, UpdateArtistDto } from '../../core/dtos';
 import { ArtistFactoryService } from './artist-factory.service';
+import { Artist } from '@prisma/client';
+
 
 @Injectable()
 export class ArtistUseCases {
   constructor(
-    private dataServices: IDataServices,
+    private dataServices: PrismaDataServices,
     private artistFactoryService: ArtistFactoryService,
   ) {}
 
@@ -44,7 +47,7 @@ export class ArtistUseCases {
     artistId: string,
   ): Promise<Artist> {
     return new Promise ((resolve, reject) => {
-      resolve(this.dataServices.artist.delete(artistId));
+      resolve( this.dataServices.artist.delete(artistId));
     })
   }
 

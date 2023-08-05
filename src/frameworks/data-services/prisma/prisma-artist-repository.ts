@@ -1,45 +1,43 @@
-import { PrismaClient, Prisma } from '@prisma/client'
-import { IGenericRepository } from '../../../core';
-import { Artist } from '../../../core';
 import { PrismaDataServices } from './prisma-data-services.service';
-//import { PrismaService } from './prisma-client.service';
-import { NotFoundException } from '@nestjs/common';
+import { PrismaService } from './prisma-client.service';
+import { Artist } from '@prisma/client' 
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-export class PrismaArtistRepository<T> implements IGenericRepository<T> {
+@Injectable()
+export class PrismaArtistRepository {
     
-    private _repository:  PrismaClient;
     public _service: PrismaDataServices; 
-    constructor() {
-        this._repository = this._service.prisma;
-    };
+
+    constructor(private prisma: PrismaService) {};
     
-    getAll(): Promise<T[]> {
+    getAll(): Promise<Artist[]> {
         return new Promise ((resolve, reject) => {
-            const allRec = this._repository.artist.findMany() as unknown as T[];
+            const allRec =  this.prisma.artist.findMany()
             resolve(allRec);
         })
     };
 
-    get(id: string): Promise<T> {
+    get(id: string): Promise<Artist> {
         return new Promise ((resolve, reject) => {
-            const artist = this._repository.artist.findUnique({
+            const artist = this.prisma.artist.findUnique({
                 where: {
                     id: id,
                 }
-            }) as unknown as T; // get(id);
+            });
 
             if (artist) resolve(artist);
             else reject(new NotFoundException('Artist was not found'));
         })
     };
 
-    create(item: T): Promise<T> {
+    create(item: Artist): Promise<Artist> {
         return new Promise ((resolve, reject) => {
             const artist = item as unknown as Artist;
 
             artist.id = v4();
-            const user = this._repository.artist.create( {
+
+            const user = this.prisma.artist.create( {
                 data: {
                     id: artist.id,
                     name: artist.id,
@@ -53,7 +51,7 @@ export class PrismaArtistRepository<T> implements IGenericRepository<T> {
         })
     };
 
-    update(id: string, item: T): Promise<T> {
+    update(id: string, item: Artist): Promise<Artist> {
         return new Promise ((resolve, reject) => {
             this.get(id)
             .then( artist => {
@@ -61,7 +59,7 @@ export class PrismaArtistRepository<T> implements IGenericRepository<T> {
                 const newArtist = item as unknown as Artist;
                 newArtist.id = id;
 
-                this._repository.artist.updateMany({
+                this.prisma.artist.updateMany({
                     where: {
                         id: newArtist.id,
                     },
@@ -83,7 +81,7 @@ export class PrismaArtistRepository<T> implements IGenericRepository<T> {
 
     delete(id: string) {
         return new Promise ((resolve, reject) => {
-            const res = this._repository.artist.delete({
+            const res = this.prisma.artist.delete({
                 where: {
                     id: id,
                 }
