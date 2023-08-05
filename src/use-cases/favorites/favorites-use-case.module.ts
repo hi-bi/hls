@@ -3,7 +3,8 @@ import { DataServicesModule } from '../../services/data-services/data-services.m
 import { FavoritesUseCases } from './favorites.use-case';
 
 @Module({
-  imports: [DataServicesModule],
+  imports: [DataServicesModule,
+  ],
   providers: [FavoritesUseCases],
   exports: [FavoritesUseCases],
 })

@@ -51,3 +51,4 @@ modelFavorites{
   tracks      String[]
   @@map("favorities")
 }
+

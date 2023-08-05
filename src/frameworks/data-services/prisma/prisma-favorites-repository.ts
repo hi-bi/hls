@@ -1,62 +1,66 @@
-import { IGenericFavoritesRepository } from '../../../core';
-import { Artist } from '../../../core';
-import { Album } from '../../../core';
-import { Track } from '../../../core';
 import { PrismaDataServices } from './prisma-data-services.service';
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { PrismaService } from './prisma-client.service';
+import { Album, Artist, Favorites, Track } from '@prisma/client' 
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 
-export class PrismaFavoritesRepository<T> implements IGenericFavoritesRepository<T> {
+@Injectable()
+export class PrismaFavoritesRepository {
     
-    private _repositoryArtist:  Map<string, string>;
-    private _repositoryAlbum:  Map<string, string>;
-    private _repositoryTrack:  Map<string, string>;
     public _service: PrismaDataServices;
 
-    constructor() {
-        this._repositoryArtist = new Map();
-        this._repositoryAlbum = new Map();
-        this._repositoryTrack = new Map();
-    };
-
+    constructor(private prisma: PrismaService) {}
     
-    getAll(): Promise<T> {
+    getAll(): Promise<Favorites> {
+
         return new Promise ((resolve, reject) => {
 
             const artists: Artist[] = [];
             const albums: Album[] = [];
             const tracks: Track[] = [];
 
-            this._repositoryArtist.forEach((value, key) => {
-                this._service.artist.get(value)
-                .then( (artist) => {
-                    artists.push(artist as unknown as Artist);
+            let favorite: Favorites;
+
+            this.prisma.favorites.findUnique({
+                where: {
+                  id: '0',
+                },
+            })
+            .then((item) => {
+                favorite = item;
+
+                favorite.artists.forEach((value, key) => {
+                    this._service.artist.get(value)
+                    .then( (artist) => {
+                        artists.push(artist);
+                    })
+                    .catch()
                 })
-                .catch()
+
+                favorite.albums.forEach((value, key) => {
+                    this._service.album.get(value)
+                    .then( (album) => {
+                        albums.push(album);
+                    })
+                    .catch()
+                })
+
+                favorite.tracks.forEach((value, key) => {
+                    this._service.track.get(value)
+                    .then( (track) => {
+                        tracks.push(track);
+                    })
+                    .catch()
+                })
+
+                const favorites = {
+                    artists,
+                    albums,
+                    tracks
+                }
+
+                resolve(favorites as unknown as any)
             })
 
-            this._repositoryAlbum.forEach((value, key) => {
-                this._service.album.get(value)
-                .then( (album) => {
-                    albums.push(album as unknown as Album);
-                })
-                .catch()
-            })
-
-            this._repositoryTrack.forEach((value, key) => {
-                this._service.track.get(value)
-                .then( (track) => {
-                    tracks.push(track as unknown as Track);
-                })
-                .catch()
-            })
-
-            const favorites = {
-                artists,
-                albums,
-                tracks
-            }
-
-            resolve(favorites as unknown as any)
         })
     };
 
@@ -65,8 +69,19 @@ export class PrismaFavoritesRepository<T> implements IGenericFavoritesRepository
 
             this._service.artist.get(id)
             .then( (artist) => {
-                this._repositoryArtist.set(id, id);
-                resolve(true as unknown as any);
+                this.prisma.favorites.update({
+                    where: {
+                        id: '0',
+                    },
+                    data: {
+                        artists: {
+                            push: id,
+                        }
+                    }
+                })
+
+                //this._repositoryArtist.set(id, id);
+                resolve(true);
             })
             .catch( (error) => {
                 reject( new UnprocessableEntityException('Artist with id === artistId does not exist'));
@@ -76,12 +91,43 @@ export class PrismaFavoritesRepository<T> implements IGenericFavoritesRepository
 
     deleteArtist(id: string): Promise<any> {
         return new Promise ((resolve, reject) => {
+            
+            let favorite: Favorites;
+            
+            this.prisma.favorites.findUnique({
+                where: {
+                    id: '0',
+                },
+            })
+            .then((item) => {
+                favorite = item;
 
-            const res = this._repositoryArtist.delete(id);
-            if (res) {
-                resolve(res)
-            }
-            else reject( new NotFoundException('Artist is not favorite'));
+                const artists = favorite.artists;
+                const index = artists.indexOf(id);
+                if (index >= 0) {
+                    artists.splice(index, 1);
+    
+                    this.prisma.favorites.update({
+                        where: {
+                            id: '0',
+                        },
+                        data: {
+                            artists: artists,
+                        }
+                    })
+                    .then((res) => {
+                        resolve(true);
+                    })
+                    .catch((err) => {
+                        new NotFoundException('Artist is not favorite')
+                    })
+    
+                } else reject( new NotFoundException('Artist is not favorite'));
+
+            })
+            .catch((err) => {
+                reject( new NotFoundException('Artist is not favorite'));
+            })
         })
     };
 
@@ -90,23 +136,64 @@ export class PrismaFavoritesRepository<T> implements IGenericFavoritesRepository
 
             this._service.album.get(id)
             .then( (album) => {
-                this._repositoryAlbum.set(id, id);
-                resolve(true as unknown as any);
+                this.prisma.favorites.update({
+                    where: {
+                        id: '0',
+                    },
+                    data: {
+                        albums: {
+                            push: id,
+                        }
+                    }
+                })
+
+                resolve(true);
             })
             .catch( (error) => {
-                reject( new UnprocessableEntityException('Album with id === artistId does not exist'));
+                reject( new UnprocessableEntityException('Albumt with id === albumId does not exist'));
             })
         })
     };
 
     deleteAlbum(id: string): Promise<any> {
         return new Promise ((resolve, reject) => {
+            
+            let favorite: Favorites;
+            
+            this.prisma.favorites.findUnique({
+                where: {
+                    id: '0',
+                },
+            })
+            .then((item) => {
+                favorite = item;
 
-            const res = this._repositoryAlbum.delete(id);
-            if (res) {
-                resolve(res)
-            }
-            else reject( new NotFoundException('Album is not favorite'));
+                const albums = favorite.albums;
+                const index = albums.indexOf(id);
+                if (index >= 0) {
+                    albums.splice(index, 1);
+    
+                    this.prisma.favorites.update({
+                        where: {
+                            id: '0',
+                        },
+                        data: {
+                            albums: albums,
+                        }
+                    })
+                    .then((res) => {
+                        resolve(true);
+                    })
+                    .catch((err) => {
+                        new NotFoundException('Albums is not favorite')
+                    })
+    
+                } else reject( new NotFoundException('Albums is not favorite'));
+
+            })
+            .catch((err) => {
+                reject( new NotFoundException('Albums is not favorite'));
+            })
         })
     };
 
@@ -115,25 +202,65 @@ export class PrismaFavoritesRepository<T> implements IGenericFavoritesRepository
 
             this._service.track.get(id)
             .then( (track) => {
-                this._repositoryTrack.set(id, id);
-                resolve(true as unknown as any);
+                this.prisma.favorites.update({
+                    where: {
+                        id: '0',
+                    },
+                    data: {
+                        tracks: {
+                            push: id,
+                        }
+                    }
+                })
+
+                resolve(true);
             })
             .catch( (error) => {
-                reject( new UnprocessableEntityException('Track with id === artistId does not exist'));
+                reject( new UnprocessableEntityException('Track with id === albumId does not exist'));
             })
-
         })
         
     };
 
     deleteTrack(id: string): Promise<any> {
         return new Promise ((resolve, reject) => {
+            
+            let favorite: Favorites;
+            
+            this.prisma.favorites.findUnique({
+                where: {
+                    id: '0',
+                },
+            })
+            .then((item) => {
+                favorite = item;
 
-            const res = this._repositoryTrack.delete(id);
-            if (res) {
-                resolve(res)
-            }
-            else reject( new NotFoundException('Track is not favorite'));
+                const tracks = favorite.tracks;
+                const index = tracks.indexOf(id);
+                if (index >= 0) {
+                    tracks.splice(index, 1);
+    
+                    this.prisma.favorites.update({
+                        where: {
+                            id: '0',
+                        },
+                        data: {
+                            tracks: tracks,
+                        }
+                    })
+                    .then((res) => {
+                        resolve(true);
+                    })
+                    .catch((err) => {
+                        new NotFoundException('Tracks is not favorite')
+                    })
+    
+                } else reject( new NotFoundException('Tracks is not favorite'));
+
+            })
+            .catch((err) => {
+                reject( new NotFoundException('Tracks is not favorite'));
+            })
         })
     };
     
