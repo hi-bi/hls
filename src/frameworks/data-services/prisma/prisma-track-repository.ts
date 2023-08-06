@@ -11,32 +11,40 @@ export class PrismaTrackRepository {
     constructor(private prisma: PrismaService) {}
     
     getAll(): Promise<Track[]> {
+
         return new Promise ((resolve, reject) => {
-            const allRec =  this.prisma.track.findMany()
-            resolve(allRec);
+            this.prisma.track.findMany()
+            .then((res) => {
+                resolve(res);
+            })
         })
     }
 
     get(id: string): Promise<Track> {
         return new Promise ((resolve, reject) => {
-            const track = this.prisma.track.findUnique({
+            this.prisma.track.findUnique({
                 where: {
                     id: id,
                 }
-            });
-
-            if (track) resolve(track);
-            else reject(new NotFoundException('Track was not found'));
+            })
+            .then((track) => {
+                if (track != null) {
+                    resolve(track);
+                } else {
+                    reject(new NotFoundException('Track was not found'));
+                }
+            })
         })
     }
 
-    create(item: Track): Promise<Track> {
-        return new Promise ((resolve, reject) => {
-            const track = item;
+    async create(track: Track) {
 
-            let okArtistId = false;
+        try {
             const artistId = track.artistId;
-
+            const albumId = track.albumId;
+    
+            let okArtistId = false;
+    
             if (artistId === undefined) {
             } else {
                 if (artistId != null) {
@@ -47,14 +55,13 @@ export class PrismaTrackRepository {
                     okArtistId = true
                 }
             }
-
+    
             if (!okArtistId) {
-                reject(new BadRequestException('artistId is wrong'))
+                throw new BadRequestException('artistId is wrong')
             }
-
+    
             let okAlbumId = false;
-            const albumId = track.albumId;
-
+    
             if (albumId === undefined) {
             } else {
                 if (albumId != null) {
@@ -65,34 +72,100 @@ export class PrismaTrackRepository {
                     okAlbumId = true
                 }
             }
-
+    
             if (!okAlbumId) {
-                reject(new BadRequestException('albumId is wrong'))
+                throw new BadRequestException('albumId is wrong')
             }
-
+    
             const repArtist = this._service.artist;
             const repAlbum = this._service.album;
-
+        
             if (artistId != null) {
-                repArtist.get(artistId)
-                .then()    
-                .catch( error => {
-                    reject( new BadRequestException('Artist was not found'));
-                }) 
+                await repArtist.get(artistId);
             }
-
+    
             if (albumId != null) {
-                repAlbum.get(albumId)
-                .then()    
-                .catch( error => {
-                    reject( new BadRequestException('Album was not found'));
-                }) 
+                await repAlbum.get(albumId)
+            }
+    
+            track.id = v4();
+            const createdTrack = await this.prisma.track.create({
+                data: {
+                    id: track.id,
+                    name: track.name,
+                    artistId: track.artistId,
+                    albumId: track.albumId,
+                    duration: track.duration,
+                }
+            })
+    
+            return createdTrack;
+        } catch (error) {
+            throw new BadRequestException(error);            
+        }
+    }
+
+
+    async update(id: string, track: Track) {
+
+        try {
+
+            const oldTrack = await this.get(id);
+
+            const artistId = oldTrack.artistId;
+            const albumId = oldTrack.albumId;
+    
+            let okArtistId = false;
+    
+            if (artistId === undefined) {
+            } else {
+                if (artistId != null) {
+                    if (validate(artistId)) {
+                        okArtistId = true
+                    }
+                } else {
+                    okArtistId = true
+                }
+            }
+    
+            if (!okArtistId) {
+                throw new BadRequestException('artistId is wrong')
+            }
+    
+            let okAlbumId = false;
+    
+            if (albumId === undefined) {
+            } else {
+                if (albumId != null) {
+                    if (validate(albumId)) {
+                        okAlbumId = true
+                    }
+                } else {
+                    okAlbumId = true
+                }
+            }
+    
+            if (!okAlbumId) {
+                throw new BadRequestException('albumId is wrong')
+            }
+    
+            const repArtist = this._service.artist;
+            const repAlbum = this._service.album;
+        
+            if (artistId != null) {
+                await repArtist.get(artistId);
+            }
+    
+            if (albumId != null) {
+                await repAlbum.get(albumId)
             }
 
-            track.id = v4();
-            this.prisma.track.create({
+            track.id = id;
+            const updatedTrack = await this.prisma.track.update({
+                where: {
+                    id: id,
+                },
                 data: {
-
                     id: track.id,
                     name: track.name,
                     artistId: track.artistId,
@@ -101,120 +174,38 @@ export class PrismaTrackRepository {
                 }
             })
 
-            resolve(item);
-
-        })
-    }
-
-    update(id: string, item: Track): Promise<Track> {
-        return new Promise ((resolve, reject) => {
-            this.get(id)
-            .then( track => {
-
-                const newTrack = item as unknown as Track;
-
-                let okArtistId = false;
-                const artistId = newTrack.artistId;
-    
-                if (artistId === undefined) {
-                } else {
-                    if (artistId != null) {
-                        if (validate(artistId)) {
-                            okArtistId = true
-                        }
-                    } else {
-                        okArtistId = true
-                    }
-                }
-    
-                if (!okArtistId) {
-                    reject(new BadRequestException('artistId is wrong'))
-                }
-    
-                let okAlbumId = false;
-                const albumId = newTrack.albumId;
-    
-                if (albumId === undefined) {
-                } else {
-                    if (albumId != null) {
-                        if (validate(albumId)) {
-                            okAlbumId = true
-                        }
-                    } else {
-                        okAlbumId = true
-                    }
-                }
-    
-                if (!okAlbumId) {
-                    reject(new BadRequestException('albumId is wrong'))
-                }
-    
-                const repArtist = this._service.artist;
-                const repAlbum = this._service.album;
-
-                if (artistId != null) {
-                    repArtist.get(artistId)
-                    .then()    
-                    .catch( error => {
-                        reject( new BadRequestException('Artist was not found'));
-                    }) 
-                }
-    
-                if (albumId != null) {
-                    repAlbum.get(albumId)
-                    .then()    
-                    .catch( error => {
-                        reject( new BadRequestException('Album was not found'));
-                    }) 
-                }
-    
-                newTrack.id = id;
-                this.prisma.track.update({
-                    where: {
-                        id: id,
-                    },
-                    data: {
-                        id: track.id,
-                        name: track.name,
-                        artistId: track.artistId,
-                        albumId: track.albumId,
-                        duration: track.duration,
-                    }
-                })
-
-//                this._repository.set(newTrack.id, item);
-                resolve(item);
-
-            })
-            .catch( error => {
-                reject( new NotFoundException('Track with id does not exist'));
-
-            })
-
-        })
+            return updatedTrack;
+        } catch (error) {
+            throw new NotFoundException(error);            
+        }
     }
 
     delete(id: string) {
         return new Promise ((resolve, reject) => {
-            const res = this.prisma.album.delete({
+
+            this.prisma.track.delete({
                 where: {
                     id: id,
                 },
             })
+            .then((track) => {
 
-            //const res = this._repository.delete(id);
-            if (res) {
                 this._service.favorites.deleteTrack(id)
                 .then( (track) => {
 //                    console.log('delete track from favorites: ', id, track)
-                    resolve(res);
+                    resolve(true);
                 })
                 .catch( (error) => {
 //                    console.log('not found track in favorites: ', id, error)
-                    resolve(res);
+                    resolve(false);
                 })
-            }
-            else reject( new NotFoundException('Track was not found'));
+
+            })
+            .catch(() => {
+                reject( new NotFoundException('Track was not found'));
+            })
+
+            //const res = this._repository.delete(id);
     
         })
     }
@@ -229,9 +220,13 @@ export class PrismaTrackRepository {
                     artistId: null,
                 }
             })
-
+            .then((track) => {
+                resolve(true);
+            })
+            .catch((err) => {
+                resolve(false);
+            })
 //            console.log('Track delete author link: ', id)
-            resolve(true);
         })
     }
 
@@ -245,9 +240,13 @@ export class PrismaTrackRepository {
                     albumId: null,
                 }
             })
-
+            .then((track)=> {
+                resolve(true);
+            })
+            .catch((err) => {
+                resolve(false);
+            })
 //            console.log('Track delete album link: ', id)
-            resolve(true);
         })
     }
 }

@@ -10,13 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model DbUser {
   id          String      @id @db.VarChar(36)
-  login       String      @unique @db.VarChar(255)
+  login       String      @db.VarChar(255)
   password    String      @db.VarChar(255)
   version     Int         @db.Integer
-  createdAt   Int         @db.Integer
-  updatedAt   Int         @db.Integer
+  createdAt   Decimal     @db.Decimal
+  updatedAt   Decimal     @db.Decimal
   @@map("user")
 }
 
@@ -25,7 +25,7 @@ model Artist {
   name        String      @db.VarChar(255)
   grammy      Boolean     @db.Boolean
   @@map("artist")
-}
+} 
 
 model Album {
   id          String      @id @db.VarChar(36)

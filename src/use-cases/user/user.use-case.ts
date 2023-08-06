@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaDataServices } from 'src/frameworks/data-services/prisma/prisma-data-services.service';
 import { CreateUserDto, UpdateUserDto } from '../../core/dtos';
 import { UserFactoryService } from './user-factory.service';
-import { User } from '@prisma/client';
+//import { DbUser } from '@prisma/client';
+import { User } from 'src/core';
 
 @Injectable()
 export class UserUseCases {

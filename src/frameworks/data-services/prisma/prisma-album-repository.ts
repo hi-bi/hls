@@ -11,30 +11,40 @@ export class PrismaAlbumRepository {
 
     constructor(private prisma: PrismaService) {}
     
-    getAll(): Promise<Album[]> {
+    async getAll(): Promise<Album[]> {
+
         return new Promise ((resolve, reject) => {
-        const allRec =  this.prisma.album.findMany()
-        resolve(allRec);
-    })
+            this.prisma.album.findMany()
+            .then((res) => {
+                resolve(res);
+            })
+            .catch((err) => {
+                reject(err);
+            })
+        })
 
     };
 
     get(id: string): Promise<Album> {
         return new Promise ((resolve, reject) => {
-            const album = this.prisma.album.findUnique({
+            this.prisma.album.findUnique({
                 where: {
                     id: id,
                 }
-            });
-
-            if (album) resolve(album);
-            else reject(new NotFoundException('Album was not found'));
+            })
+            .then((album) => {
+                if (album != null) {
+                    resolve(album);
+                } else {
+                    reject(new NotFoundException('Album was not found'));
+                }
+            })
         })
     };
 
-    create(item: Album): Promise<Album> {
+    create(album: Album): Promise<Album> {
         return new Promise ((resolve, reject) => {
-            const album = item;
+            console.log('Album create: ', album);
 
             const repArtist = this._service.artist;
             
@@ -47,19 +57,31 @@ export class PrismaAlbumRepository {
                         reject( new BadRequestException('artistId is not uuid'));
                     } else {
                         repArtist.get(artistId)
-                        .then( () => {
-                            album.id = v4();
-                            this.prisma.album.create({
-                                data: {
-                                    id: album.id,
-                                    name: album.name,
-                                    year: album.year,
-                                    artistId: album.artistId,
-                                }
-                            })
-                            //this._repository.set(album.id, item);
+                        .then( (artist) => {
+                            if (artist != null) {
+                                album.id = v4();
+                                this.prisma.album.create({
+                                    data: {
+                                        id: album.id,
+                                        name: album.name,
+                                        year: album.year,
+                                        artistId: album.artistId,
+                                    }
+                                })
+                                .then((res) => {
+                                    //resolve(item);
+                                    console.log('create album: ', res);
+                                    resolve(res);
+                                })
+                                .catch((err) => {
+                                    reject( err);
+                                })
+                                //this._repository.set(album.id, item);
+    
+                            } else {
+                                reject( new BadRequestException('Artist was not found'));
+                            }
                     
-                            resolve(item);
                         })
                         .catch( error => {
                             reject( new BadRequestException('Artist was not found'));
@@ -76,9 +98,15 @@ export class PrismaAlbumRepository {
                             artistId: album.artistId,
                         }
                     })
+                    .then((res) => {
+                        console.log('Album created: ', res);
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        console.log('Album creat err: ', err);
+                        reject( err);
+                    })
                     //this._repository.set(album.id, item);
-            
-                    resolve(item);
                 }
     
             }  
@@ -115,9 +143,14 @@ export class PrismaAlbumRepository {
                                         artistId: album.artistId,
                                     }
                                 })
+                                .then((res) => {
+                                    resolve(item);
+                                })
+                                .catch((err) => {
+                                    reject( new BadRequestException('Artist was not found'));
+                                })
                                 //this._repository.set(newAlbum.id, item);
                         
-                                resolve(item);
                             })
                             .catch( error => {
                                 reject( new BadRequestException('Artist was not found'));
@@ -137,9 +170,13 @@ export class PrismaAlbumRepository {
                                 artistId: album.artistId,
                             }
                         })
+                        .then((res) => {
+                            resolve(item);
+                        })
+                        .catch((err) => {
+                            reject( new NotFoundException('Album with id does not exist'));
+                        })
                         //this._repository.set(newAlbum.id, item);
-                
-                        resolve(item);
                     }
                 }  
             })
@@ -147,38 +184,47 @@ export class PrismaAlbumRepository {
                 reject( new NotFoundException('Album with id does not exist'));
 
             })
-    
         })
     };
 
-    delete(id: string) {
+    delete1(id: string) {
         return new Promise ((resolve, reject) => {
-            const res = this.prisma.album.delete({
+            let result = false;
+            this.prisma.album.delete({
                 where: {
                     id: id,
                 },
             })
-            //const res = this._repository.delete(id);
+            .then((res) => {
+                result = true;
 
-            if (res) {
                 this._service.track.deleteLinkToAlbum(id)
                 .then( (res) => {
                     const next = res;
 //                    console.log('Album delete track reference: ', id, res)
                 })
+                .catch((err) => {
+                    const next = err;
+                })
 
                 this._service.favorites.deleteAlbum(id)
-                .then( (track) => {
-                    resolve(res);
+                .then( (album) => {
+                    resolve(result);
                 })
                 .catch( (error) => {
-                    resolve(res);
+                    resolve(result);
                 })
 
-                resolve(res);
+                resolve(result);
 
-            }
-            else reject( new NotFoundException('Album was not found'));
+            })
+            .catch((err) => {
+
+                reject( new NotFoundException('Album was not found'));
+
+                result = false;
+            })
+            //const res = this._repository.delete(id);
     
         })
     };
@@ -193,15 +239,14 @@ export class PrismaAlbumRepository {
                     artistId: null,
                 }
             })
+            .then((album) => {
+                resolve(true);
+            })
+            .catch((err) => {
+                resolve(false);
+            })
 
-            //this._repository.forEach((value, key) => {
-            //    const item = value as unknown as Album
-            //    if (item.artistId == id) {
-            //        item.artistId = null;
-            //    }
-            //})
 //            console.log('Album delete author link: ', id)
-            resolve(true);
         })
     };
     

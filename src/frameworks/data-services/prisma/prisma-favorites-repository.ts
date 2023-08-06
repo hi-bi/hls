@@ -12,11 +12,17 @@ export class PrismaFavoritesRepository {
     
     getAll(): Promise<Favorites> {
 
-        return new Promise ((resolve, reject) => {
+        const promGetAll : Promise<Favorites> = new Promise ((resolve, reject) => {
+            
+            let artists: Artist[] = [];
+            let albums: Album[] = [];
+            let tracks: Track[] = [];
 
-            const artists: Artist[] = [];
-            const albums: Album[] = [];
-            const tracks: Track[] = [];
+            let favorities = {
+                artists,
+                albums,
+                tracks
+            }
 
             let favorite: Favorites;
 
@@ -28,45 +34,61 @@ export class PrismaFavoritesRepository {
             .then((item) => {
                 favorite = item;
 
+                let promises = [];
                 favorite.artists.forEach((value, key) => {
-                    this._service.artist.get(value)
-                    .then( (artist) => {
-                        artists.push(artist);
-                    })
-                    .catch()
+                    promises.push(this._service.artist.get(value));
                 })
+
+                const resultArtist = Promise.all(promises) as unknown as Artist[]; 
+
+                return resultArtist;
+            })
+            .then((result) => {
+
+                favorities.artists = result;
+
+                let promises = [];
 
                 favorite.albums.forEach((value, key) => {
-                    this._service.album.get(value)
-                    .then( (album) => {
-                        albums.push(album);
-                    })
-                    .catch()
+                    promises.push(this._service.album.get(value));
                 })
+
+                const resultAlbum = Promise.all(promises) as unknown as Album[]; 
+
+                return resultAlbum
+            })
+            .then((result) => {
+
+                favorities.albums = result;
+
+                let promises = [];
 
                 favorite.tracks.forEach((value, key) => {
-                    this._service.track.get(value)
-                    .then( (track) => {
-                        tracks.push(track);
-                    })
-                    .catch()
+                    promises.push(this._service.track.get(value));
                 })
 
-                const favorites = {
-                    artists,
-                    albums,
-                    tracks
-                }
+                const resultTrack = Promise.all(promises) as unknown as Track[]; 
 
-                resolve(favorites as unknown as any)
+                return resultTrack
+            })
+            .then((result) => {
+
+                favorities.tracks = result;
+
+                resolve(
+                    favorities as unknown as any
+                 )
+
             })
 
         })
+
+        return promGetAll;
     };
 
     addArtist(id: string): Promise<any> {
         return new Promise ((resolve, reject) => {
-
+            console.log('Favorities Artist add: ', id);
             this._service.artist.get(id)
             .then( (artist) => {
                 this.prisma.favorites.update({
@@ -79,11 +101,18 @@ export class PrismaFavoritesRepository {
                         }
                     }
                 })
+                .then((res) => {
+                    resolve(true);
+                })
+                .catch((err) => {
+
+                    reject(err);
+                })
 
                 //this._repositoryArtist.set(id, id);
-                resolve(true);
             })
-            .catch( (error) => {
+            .catch( (err) => {
+                console.log('Favorities Artist add error: ', err);
                 reject( new UnprocessableEntityException('Artist with id === artistId does not exist'));
             })
         })
@@ -146,8 +175,9 @@ export class PrismaFavoritesRepository {
                         }
                     }
                 })
-
-                resolve(true);
+                .then((res) => {
+                    resolve(true);
+                })
             })
             .catch( (error) => {
                 reject( new UnprocessableEntityException('Albumt with id === albumId does not exist'));
@@ -212,8 +242,10 @@ export class PrismaFavoritesRepository {
                         }
                     }
                 })
+                .then((res) => {
+                    resolve(true);
+                })
 
-                resolve(true);
             })
             .catch( (error) => {
                 reject( new UnprocessableEntityException('Track with id === albumId does not exist'));

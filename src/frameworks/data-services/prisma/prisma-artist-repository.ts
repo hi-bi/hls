@@ -13,64 +13,72 @@ export class PrismaArtistRepository {
     
     getAll(): Promise<Artist[]> {
         return new Promise ((resolve, reject) => {
-            const allRec =  this.prisma.artist.findMany()
-            resolve(allRec);
+            this.prisma.artist.findMany()
+            .then((res) => {
+                resolve(res);
+            })            
         })
     };
 
     get(id: string): Promise<Artist> {
         return new Promise ((resolve, reject) => {
-            const artist = this.prisma.artist.findUnique({
+            this.prisma.artist.findUnique({
                 where: {
                     id: id,
                 }
-            });
-
-            if (artist) resolve(artist);
-            else reject(new NotFoundException('Artist was not found'));
+            })
+            .then((artist) => {
+                if (artist != null) {
+                    resolve(artist);
+                } else {
+                    reject(new NotFoundException('Artist was not found'));
+                }
+            })
         })
     };
 
-    create(item: Artist): Promise<Artist> {
+    create(artist: Artist): Promise<Artist> {
         return new Promise ((resolve, reject) => {
-            const artist = item as unknown as Artist;
+            const artistId = v4();
 
-            artist.id = v4();
-
-            const user = this.prisma.artist.create( {
+            this.prisma.artist.create( {
                 data: {
-                    id: artist.id,
-                    name: artist.id,
+                    id: artistId,
+                    name: artist.name,
                     grammy: artist.grammy
                 } 
-            });
-
-            console.log('Artist create: ', user, item);
-    
-            resolve(item);
+            })
+            .then((res) => {
+                resolve(res);
+            })
+            .catch((err) => {
+                reject(err);
+            })
         })
     };
 
     update(id: string, item: Artist): Promise<Artist> {
         return new Promise ((resolve, reject) => {
             this.get(id)
-            .then( artist => {
+            .then( (artist) => {
 
-                const newArtist = item as unknown as Artist;
-                newArtist.id = id;
+                item.id = artist.id
 
                 this.prisma.artist.updateMany({
                     where: {
-                        id: newArtist.id,
+                        id: id,
                     },
                     data: {
-                        name: newArtist.name,
-                        grammy: newArtist.grammy
+                        name: item.name,
+                        grammy: item.grammy
                     }
                 }) //.set(newArtist.id, item);
-        
-                resolve(item);
-
+                .then((res) => {
+                    resolve(item);
+                })
+                .catch((err) => {
+                    reject(new NotFoundException('Artist with id does not exist'));
+                })
             })
             .catch( error => {
                 reject( new NotFoundException('Artist with id does not exist'));
@@ -81,14 +89,21 @@ export class PrismaArtistRepository {
 
     delete(id: string) {
         return new Promise ((resolve, reject) => {
-            const res = this.prisma.artist.delete({
+            let result = false;
+            this.prisma.artist.delete({
                 where: {
                     id: id,
                 }
             }) //delete(id);
-            resolve(res);
+            .then((artist) => {
+                console.log('Artist deleted: ', artist);
+                result = true;
 
-            if (res) {
+                this._service.album.deleteLinkToArtist(id)
+                .then( (res) => {
+                    const next = res;
+                    console.log('Artist delete album reference: ', id, res)
+                })
 
                 this._service.track.deleteLinkToArtist(id)
                 .then( (res) => {
@@ -96,25 +111,22 @@ export class PrismaArtistRepository {
 //                    console.log('Artist delete track reference: ', id, res)
                 })
 
-                this._service.album.deleteLinkToArtist(id)
-                .then( (res) => {
-                    const next = res;
-//                    console.log('Artist delete album reference: ', id, res)
-                })
-
                 this._service.favorites.deleteArtist(id)
                 .then( (artist) => {
-                    const next = res;
+                    const next = result;
 //                    console.log('delete artist from favorites: ', id, artist)
                 })
                 .catch( (error) => {
-                    const next = res;
+                    const next = result;
 //                    console.log('not found artist in favorites: ', id)
                 })
 
-                resolve(res);
-            }
-            else reject( new NotFoundException('Artist was not found'));
+                resolve(result);
+
+            })
+            .catch((err) => {
+                reject( new NotFoundException('Artist was not found'))
+            }) 
     
         })
     };
