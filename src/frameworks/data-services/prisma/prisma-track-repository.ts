@@ -9,8 +9,18 @@ export class PrismaTrackRepository {
     public _service: PrismaDataServices;
 
     constructor(private prisma: PrismaService) {}
+
+    async getAll() {
+        try {
+            const tracks = await this.prisma.track.findMany();
+
+            return tracks
+        } catch (error) {
+            
+        }
+    }
     
-    getAll(): Promise<Track[]> {
+    getAll1(): Promise<Track[]> {
 
         return new Promise ((resolve, reject) => {
             this.prisma.track.findMany()
@@ -20,7 +30,25 @@ export class PrismaTrackRepository {
         })
     }
 
-    get(id: string): Promise<Track> {
+    async get(id: string) {
+        try {
+            const track = await this.prisma.track.findUnique({
+                where: {
+                    id: id,
+                }
+            })
+            if (track == null) {
+                throw new NotFoundException('Track was not found');
+            }
+
+            return track;
+
+        } catch (error) {
+            throw new NotFoundException('Track was not found');
+        }
+    }
+
+    get1(id: string): Promise<Track> {
         return new Promise ((resolve, reject) => {
             this.prisma.track.findUnique({
                 where: {
@@ -166,7 +194,6 @@ export class PrismaTrackRepository {
                     id: id,
                 },
                 data: {
-                    id: track.id,
                     name: track.name,
                     artistId: track.artistId,
                     albumId: track.albumId,
@@ -175,44 +202,30 @@ export class PrismaTrackRepository {
             })
 
             return updatedTrack;
-        } catch (error) {
-            throw new NotFoundException(error);            
+        } catch (err) {
+            throw new NotFoundException(err);            
         }
     }
 
-    delete(id: string) {
-        return new Promise ((resolve, reject) => {
-
-            this.prisma.track.delete({
+    async delete (id: string) {
+        try {
+            await this.prisma.track.delete({
                 where: {
                     id: id,
-                },
-            })
-            .then((track) => {
+                }
+            }) 
+            
+            await this._service.favorites.deleteTrack(id);
 
-                this._service.favorites.deleteTrack(id)
-                .then( (track) => {
-//                    console.log('delete track from favorites: ', id, track)
-                    resolve(true);
-                })
-                .catch( (error) => {
-//                    console.log('not found track in favorites: ', id, error)
-                    resolve(false);
-                })
-
-            })
-            .catch(() => {
-                reject( new NotFoundException('Track was not found'));
-            })
-
-            //const res = this._repository.delete(id);
-    
-        })
+            return
+        } catch (err) {
+            throw new NotFoundException('Track was not found');
+        }
     }
 
-    deleteLinkToArtist(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-            this.prisma.track.updateMany({
+    async deleteLinkToArtist(id: string) {
+        try {
+            const result = await this.prisma.track.updateMany({
                 where: {
                     artistId: id,
                 },
@@ -220,19 +233,15 @@ export class PrismaTrackRepository {
                     artistId: null,
                 }
             })
-            .then((track) => {
-                resolve(true);
-            })
-            .catch((err) => {
-                resolve(false);
-            })
-//            console.log('Track delete author link: ', id)
-        })
+            return result;
+        } catch (error) {
+
+        }
     }
 
-    deleteLinkToAlbum(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-            this.prisma.track.updateMany({
+    async deleteLinkToAlbum(id: string) {
+        try {
+            const result = await this.prisma.track.updateMany({
                 where: {
                     albumId: id,
                 },
@@ -240,13 +249,10 @@ export class PrismaTrackRepository {
                     albumId: null,
                 }
             })
-            .then((track)=> {
-                resolve(true);
-            })
-            .catch((err) => {
-                resolve(false);
-            })
-//            console.log('Track delete album link: ', id)
-        })
+            return result;
+        } catch (error) {
+            
+        }
     }
+
 }

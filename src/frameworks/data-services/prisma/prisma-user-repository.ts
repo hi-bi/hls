@@ -1,9 +1,8 @@
-//import { UpdateUserDto } from 'src/core/dtos';
 import { PrismaDataServices } from './prisma-data-services.service';
 import { PrismaService } from './prisma-client.service';
-import { Prisma, DbUser } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { User } from 'src/core';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, HttpException, NotFoundException } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 export class PrismaUserRepository {
@@ -14,6 +13,7 @@ export class PrismaUserRepository {
     
     getAll(): Promise<User[]> {
         return new Promise ((resolve, reject) => {
+
             this.prisma.dbUser.findMany()
             .then((res) =>{
                 const items: User[] = [];
@@ -42,16 +42,7 @@ export class PrismaUserRepository {
     async get(id: string) {
 
         try {
-            const dbUser = await this.prisma.dbUser.findUnique({
-                where: {
-                    id: id,
-                }
-            })
-            console.log('User get from db: ', dbUser);
-            
-            if (dbUser == null) {
-                throw new NotFoundException('User was not found');
-            }
+            const dbUser = await this.getDb(id);
 
             const user: User = {
                 id: dbUser.id,
@@ -67,82 +58,68 @@ export class PrismaUserRepository {
             return user;
 
         } catch (error) {
-
             throw new NotFoundException('User was not found');
         }
     }
 
-    get1(id: string): Promise<User> {
-        return new Promise ((resolve, reject) => {
-            this.prisma.dbUser.findUnique({
+    async getDb(id: string) {
+
+        try {
+            const dbUser = await this.prisma.dbUser.findUnique({
                 where: {
                     id: id,
                 }
             })
-            .then((res) => {
-                console.log('User get from db: ', res);
-                const user: User = {
-                    id: res.id,
-                    login: res.login,
-                    password: res.password,
-                    version: res.version,
-                    createdAt: new Number(res.createdAt) as unknown as number,
-                    updatedAt: new Number(res.updatedAt) as unknown as number,
-                }
-                delete user.password;
-                resolve(user);
-            })
-            .catch((err) => {
-                console.log('User get error: ', err);
-                reject(new NotFoundException('User was not found'));
-            })
-        })
+            
+            if (dbUser == null) {
+                throw new NotFoundException('User was not found');
+            }
+
+            return dbUser;
+
+        } catch (error) {
+            throw new NotFoundException('User was not found');
+        }
     }
 
-    create(item: User): Promise<User> {
-        return new Promise ((resolve, reject) => {
-            const user = item;
+    async create (item: User) {
+        try {
+            const userId = v4();
+            const createdAt = new Date().getTime();
 
-            user.id = v4();
-            user.version = 1;
-            user.createdAt = new Date().getTime();
-            user.updatedAt = user.createdAt
-
-            this.prisma.dbUser.create({
+            const dbUser = await this.prisma.dbUser.create({
                 data: {
-                    id: user.id,
-                    login: user.login,
-                    password: user.password,
-                    version: user.version,
-                    createdAt: new Prisma.Decimal(user.createdAt),
-                    updatedAt: new Prisma.Decimal(user.updatedAt),
+                    id: userId,
+                    login: item.login,
+                    password: item.password,
+                    version: 1,
+                    createdAt: new Prisma.Decimal(createdAt),
+                    updatedAt: new Prisma.Decimal(createdAt),
                 }
             })
-            .then((res) => {
-                const user: User = {
-                    id: res.id,
-                    login: res.login,
-                    password: res.password,
-                    version: res.version,
-                    createdAt: new Number(res.createdAt) as unknown as number,
-                    updatedAt: new Number(res.updatedAt) as unknown as number,
-                }
-                delete user.password;
-                resolve(user);
-            })
-            .catch((err) => {
-                console.log('create user: ', err, item)
-                reject(err);
-            })
-        })
+            
+            const user: User = {
+                id: dbUser.id,
+                login: dbUser.login,
+                password: dbUser.password,
+                version: dbUser.version,
+                createdAt: new Number(dbUser.createdAt) as unknown as number,
+                updatedAt: new Number(dbUser.updatedAt) as unknown as number,
+            }
+
+            delete user.password;
+            
+            return user;
+
+        } catch (error) {
+
+        }
     }
 
     async update(id: string, user: User) {
 
         try {
-            console.log('User update: ', id, user, )
-            const oldUser = await this.get(id);
-            console.log('User update found: ', id, oldUser, )
+            const oldUser = await this.getDb(id);
 
             const nPassChange = user.password.indexOf(' ');
             let newPassword = '';
@@ -159,56 +136,62 @@ export class PrismaUserRepository {
 
             oldUser.password = newPassword;
             oldUser.version ++;
-            oldUser.updatedAt = new Date().getTime();
+            oldUser.updatedAt = new Prisma.Decimal(new Date().getTime());
 
-            const updatedDbUser = await this.prisma.dbUser.update({
+            await this.prisma.dbUser.update({
                 where: {
                     id: id,
                 },
                 data: {
-                    id: oldUser.id,
                     password: oldUser.password,
                     version: oldUser.version,
-                    updatedAt: oldUser.updatedAt
+                    updatedAt: oldUser.updatedAt,
                 }
             })
 
             const updatedUser = new User({
-                id: updatedDbUser.id,
-                login: updatedDbUser.login,
-                password: updatedDbUser.password,
-                version: updatedDbUser.version,
-                createdAt: new Number(updatedDbUser.createdAt) as unknown as number,
-                updatedAt: new Number(updatedDbUser.updatedAt) as unknown as number,
+                id: oldUser.id,
+                login: oldUser.login,
+                password: oldUser.password,
+                version: oldUser.version,
+                createdAt: new Number(oldUser.createdAt) as unknown as number,
+                updatedAt: new Number(oldUser.updatedAt) as unknown as number,
             });
-            user.id = updatedUser.id
 
             delete updatedUser.password;
 
-            return user;
+            return updatedUser;
 
         } catch (err) {
-            console.log('User update not found: ', id, user, err)
+            const updateError = err as unknown as HttpException;
 
-            throw new NotFoundException('User with id does not exist')
+            if (updateError.getStatus() === 403){
+                throw new ForbiddenException('oldPassword is wrong');
+            }
+
+            if (updateError.getStatus() === 404){
+                throw new NotFoundException('User was not found');
+            }
+
         }
 
     }
 
-    delete(id: string) {
-        return new Promise ((resolve, reject) => {
-            this.prisma.dbUser.delete({
+    async delete(id: string) {
+
+        try {
+
+            await this.prisma.dbUser.delete({
                 where: {
                     id: id,
-                },
-            })
-            .then((res) => {
-                resolve(true);
-            })
-            .catch((err) => {
-                reject( new NotFoundException('User was not found'));
-            })
-        })
+                }
+            }) 
+            
+            return
+
+        } catch (err) {
+            throw new NotFoundException('Artist was not found');
+        }
     }
-    
+
 }

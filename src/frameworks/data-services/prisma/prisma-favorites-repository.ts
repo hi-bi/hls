@@ -80,220 +80,166 @@ export class PrismaFavoritesRepository {
                  )
 
             })
+            .catch((error) => {
 
+            })
         })
 
         return promGetAll;
     };
 
-    addArtist(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-            console.log('Favorities Artist add: ', id);
-            this._service.artist.get(id)
-            .then( (artist) => {
-                this.prisma.favorites.update({
-                    where: {
-                        id: '0',
-                    },
-                    data: {
-                        artists: {
-                            push: id,
-                        }
+    async addArtist (id: string) {
+        try {
+
+            await this._service.artist.get(id);
+
+            const result = await this.prisma.favorites.update({
+                where: {
+                    id: '0',
+                },
+                data: {
+                    artists: {
+                        push: id,
                     }
-                })
-                .then((res) => {
-                    resolve(true);
-                })
-                .catch((err) => {
+                }
+            });
 
-                    reject(err);
-                })
-
-                //this._repositoryArtist.set(id, id);
-            })
-            .catch( (err) => {
-                console.log('Favorities Artist add error: ', err);
-                reject( new UnprocessableEntityException('Artist with id === artistId does not exist'));
-            })
-        })
-    };
-
-    deleteArtist(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
+            return result;
+        } catch (err) {
+                throw new UnprocessableEntityException('Artist with id === artistId does not exist');
             
-            let favorite: Favorites;
-            
-            this.prisma.favorites.findUnique({
+        }
+    } 
+
+    async deleteArtist(artistId: string) {
+        try {
+            const favorite = await this.prisma.favorites.findUnique({
                 where: {
                     id: '0',
                 },
             })
-            .then((item) => {
-                favorite = item;
 
-                const artists = favorite.artists;
-                const index = artists.indexOf(id);
-                if (index >= 0) {
-                    artists.splice(index, 1);
-    
-                    this.prisma.favorites.update({
-                        where: {
-                            id: '0',
-                        },
-                        data: {
-                            artists: artists,
-                        }
-                    })
-                    .then((res) => {
-                        resolve(true);
-                    })
-                    .catch((err) => {
-                        new NotFoundException('Artist is not favorite')
-                    })
-    
-                } else reject( new NotFoundException('Artist is not favorite'));
+            const artists = favorite.artists;
 
-            })
-            .catch((err) => {
-                reject( new NotFoundException('Artist is not favorite'));
-            })
-        })
-    };
-
-    addAlbum(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-
-            this._service.album.get(id)
-            .then( (album) => {
-                this.prisma.favorites.update({
-                    where: {
-                        id: '0',
-                    },
-                    data: {
-                        albums: {
-                            push: id,
-                        }
+            const result = await this.prisma.favorites.update({
+                where: {
+                    id: '0',
+                },
+                data: {
+                    artists: {
+                        set: artists.filter((id) => id !== artistId)
                     }
-                })
-                .then((res) => {
-                    resolve(true);
-                })
+                }
             })
-            .catch( (error) => {
-                reject( new UnprocessableEntityException('Albumt with id === albumId does not exist'));
-            })
-        })
+
+            return result;
+
+        } catch (error) {
+            
+        }
+    }
+
+
+    async addAlbum(id: string) {
+        try {
+
+            await this._service.album.get(id);
+
+            const result = await this.prisma.favorites.update({
+                where: {
+                    id: '0',
+                },
+                data: {
+                    albums: {
+                        push: id,
+                    }
+                }
+            });
+
+            return result;
+        } catch (err) {
+                throw new UnprocessableEntityException('Album with id === albumId does not exist');
+            
+        }
     };
 
-    deleteAlbum(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-            
-            let favorite: Favorites;
-            
-            this.prisma.favorites.findUnique({
+    async deleteAlbum(albumId: string) {
+        try {
+            const favorite = await this.prisma.favorites.findUnique({
                 where: {
                     id: '0',
                 },
             })
-            .then((item) => {
-                favorite = item;
 
-                const albums = favorite.albums;
-                const index = albums.indexOf(id);
-                if (index >= 0) {
-                    albums.splice(index, 1);
-    
-                    this.prisma.favorites.update({
-                        where: {
-                            id: '0',
-                        },
-                        data: {
-                            albums: albums,
-                        }
-                    })
-                    .then((res) => {
-                        resolve(true);
-                    })
-                    .catch((err) => {
-                        new NotFoundException('Albums is not favorite')
-                    })
-    
-                } else reject( new NotFoundException('Albums is not favorite'));
+            const albums = favorite.albums;
 
-            })
-            .catch((err) => {
-                reject( new NotFoundException('Albums is not favorite'));
-            })
-        })
-    };
-
-    addTrack(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-
-            this._service.track.get(id)
-            .then( (track) => {
-                this.prisma.favorites.update({
-                    where: {
-                        id: '0',
-                    },
-                    data: {
-                        tracks: {
-                            push: id,
-                        }
+            const result = await this.prisma.favorites.update({
+                where: {
+                    id: '0',
+                },
+                data: {
+                    albums: {
+                        set: albums.filter((id) => id !== albumId)
                     }
-                })
-                .then((res) => {
-                    resolve(true);
-                })
+                }
+            })
 
-            })
-            .catch( (error) => {
-                reject( new UnprocessableEntityException('Track with id === albumId does not exist'));
-            })
-        })
-        
+            return result;
+
+        } catch (error) {
+            
+        }
+    }
+
+    async addTrack(id: string) {
+        try {
+
+            await this._service.track.get(id);
+
+            const result = await this.prisma.favorites.update({
+                where: {
+                    id: '0',
+                },
+                data: {
+                    tracks: {
+                        push: id,
+                    }
+                }
+            });
+
+            return result;
+        } catch (err) {
+                throw new UnprocessableEntityException('Track with id === trackId does not exist');
+            
+        }
     };
 
-    deleteTrack(id: string): Promise<any> {
-        return new Promise ((resolve, reject) => {
-            
-            let favorite: Favorites;
-            
-            this.prisma.favorites.findUnique({
+    async deleteTrack(trackId: string) {
+        try {
+            const favorite = await this.prisma.favorites.findUnique({
                 where: {
                     id: '0',
                 },
             })
-            .then((item) => {
-                favorite = item;
 
-                const tracks = favorite.tracks;
-                const index = tracks.indexOf(id);
-                if (index >= 0) {
-                    tracks.splice(index, 1);
-    
-                    this.prisma.favorites.update({
-                        where: {
-                            id: '0',
-                        },
-                        data: {
-                            tracks: tracks,
-                        }
-                    })
-                    .then((res) => {
-                        resolve(true);
-                    })
-                    .catch((err) => {
-                        new NotFoundException('Tracks is not favorite')
-                    })
-    
-                } else reject( new NotFoundException('Tracks is not favorite'));
+            const tracks = favorite.tracks;
 
+            const result = await this.prisma.favorites.update({
+                where: {
+                    id: '0',
+                },
+                data: {
+                    tracks: {
+                        set: tracks.filter((id) => id !== trackId)
+                    }
+                }
             })
-            .catch((err) => {
-                reject( new NotFoundException('Tracks is not favorite'));
-            })
-        })
-    };
-    
+
+            return result;
+
+        } catch (error) {
+            
+        }
+    }
+
 }
