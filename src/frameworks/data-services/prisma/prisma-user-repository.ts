@@ -72,7 +72,7 @@ export class PrismaUserRepository {
             })
             
             if (dbUser == null) {
-                throw new NotFoundException('User was not found');
+                throw new NotFousssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssndException('User was not found');
             }
 
             return dbUser;

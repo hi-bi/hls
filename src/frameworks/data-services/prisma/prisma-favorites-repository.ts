@@ -1,7 +1,7 @@
 import { PrismaDataServices } from './prisma-data-services.service';
 import { PrismaService } from './prisma-client.service';
 import { Album, Artist, Favorites, Track } from '@prisma/client' 
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 
 @Injectable()
 export class PrismaFavoritesRepository {
@@ -77,7 +77,7 @@ export class PrismaFavoritesRepository {
 
                 resolve(
                     favorities as unknown as any
-                 )
+                )
 
             })
             .catch((error) => {
