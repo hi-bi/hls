@@ -80,9 +80,6 @@ export class PrismaFavoritesRepository {
                 )
 
             })
-            .catch((error) => {
-
-            })
         })
 
         return promGetAll;
