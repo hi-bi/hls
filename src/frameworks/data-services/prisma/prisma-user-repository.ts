@@ -63,7 +63,7 @@ export class PrismaUserRepository {
     }
 
     async getDb(id: string) {
-
+        
         try {
             const dbUser = await this.prisma.dbUser.findUnique({
                 where: {
