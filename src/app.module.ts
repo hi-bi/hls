@@ -7,6 +7,7 @@ import { ArtistUseCasesModule } from './use-cases/artist/artist-use-cases.module
 import { TrackUseCasesModule } from './use-cases/track/track-use-cases.module';
 import { UserUseCasesModule } from './use-cases/user/user-use-cases.module';
 import { FavoritesUseCasesModule } from './use-cases/favorites/favorites-use-case.module';
+import { LoggingInterceptorModule } from './interceptors/logging-interceptors.module';
 
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -19,7 +20,8 @@ import { ConfigModule } from '@nestjs/config';
     ArtistUseCasesModule,
     TrackUseCasesModule,
     UserUseCasesModule,
-    FavoritesUseCasesModule
+    FavoritesUseCasesModule,
+    LoggingInterceptorModule
   ],
   controllers: [
     AppController, 
@@ -29,6 +31,8 @@ import { ConfigModule } from '@nestjs/config';
     UserController, 
     FavoritesController
   ],
-  providers: [AppService],
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule {}
