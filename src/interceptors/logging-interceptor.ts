@@ -9,17 +9,18 @@ export class LoggingInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     const url = req.url;
     const method = req.method;
-    const body = req.body;
+    const body = JSON.stringify(req.body);
+    const now = new Date().toISOString().split('T');
     
-//    console.log(context.getClass().name, `${url} ${method} ${body}`);
-    console.log(context.getClass().name, url, method, body);
+    process.stdout.write(`[${context.getClass().name}] - [${now}] - [Request] - [${url}] - [${method}] - [${body}]\n`);
 
-    const now = Date.now();
     return next
       .handle()
       .pipe(
-        tap((res) => {
-            console.log('Response: ', context.switchToHttp().getResponse().statusCode, res, );
+        tap((value) => {
+          const res = context.switchToHttp().getResponse()
+          const now = new Date().toISOString().split('T');
+          process.stdout.write(`[${context.getClass().name}] - [${now}] - [Response] - [${res.statusCode}] - [${JSON.stringify(value)}]\n`);
         })
       );
   }
