@@ -8,12 +8,14 @@ import { TrackUseCasesModule } from './use-cases/track/track-use-cases.module';
 import { UserUseCasesModule } from './use-cases/user/user-use-cases.module';
 import { FavoritesUseCasesModule } from './use-cases/favorites/favorites-use-case.module';
 import { LoggingInterceptorModule } from './interceptors/logging-interceptors.module';
-import {EventEmitterModule } from '@nestjs/event-emitter'
+//import {EventEmitterModule } from '@nestjs/event-emitter'
+import { LoggerServiceModule } from './services/logging-services/logging-services.module';
 
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { NotificationsModule } from './notifications/notifications.module';
 import { NotificationsService } from './notifications/notifications.service';
+import { ExceptionsModule } from './exceptions/exception-everything.module'; 
 
 @Module({
   imports: [
@@ -25,8 +27,10 @@ import { NotificationsService } from './notifications/notifications.service';
     UserUseCasesModule,
     FavoritesUseCasesModule,
     LoggingInterceptorModule,
-    EventEmitterModule.forRoot(),
+    //EventEmitterModule.forRoot(),
     NotificationsModule,
+    ExceptionsModule,
+    LoggerServiceModule,
     ],
   controllers: [
     AppController, 

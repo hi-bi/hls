@@ -3,9 +3,9 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class NotificationsService {
-@OnEvent('uncaughtException')
+@OnEvent('*.*')
     async notifyUncaughtException (payload: any) {
-        console.log(`Hello user, ${payload.name} has been added to our menu. Enjoy.`)
+        console.log(`notifyUncaughtException: ${payload}`)
     }
 
 @OnEvent('unhandledRejection')

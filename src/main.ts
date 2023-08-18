@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { writeFileSync } from 'node:fs';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggerService } from './services/logging-services/logging-services.service';
 
 async function bootstrap() {
 
@@ -11,6 +12,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
     
     app.useGlobalPipes( new ValidationPipe());
+
+    app.useLogger(app.get(LoggerService));
     
     const options = new DocumentBuilder()
       .setTitle("Home Library Service")
