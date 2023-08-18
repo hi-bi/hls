@@ -10,6 +10,7 @@ import { FavoritesUseCasesModule } from './use-cases/favorites/favorites-use-cas
 import { LoggingInterceptorModule } from './interceptors/logging-interceptors.module';
 //import {EventEmitterModule } from '@nestjs/event-emitter'
 import { LoggerServiceModule } from './services/logging-services/logging-services.module';
+import { LoggerMiddleware } from './services/middleware/middleware-logger.service';
 
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';

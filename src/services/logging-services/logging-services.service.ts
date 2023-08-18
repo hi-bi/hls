@@ -4,7 +4,7 @@ import { Injectable, ConsoleLogger } from '@nestjs/common';
 export class LoggerService extends ConsoleLogger {
     
     private isFileLogging: boolean;
-    private loggingLevel: number;
+    private loggingLevel: number;   
     private loggingGeneralFileName: string;
     private loggingGeneralFileSize: number;
     private loggingErrorFileName: string;
