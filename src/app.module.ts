@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AlbumController, ArtistController, TrackController, UserController, FavoritesController} from './controllers'
+import { AuthController, AlbumController, ArtistController, TrackController, UserController, FavoritesController} from './controllers'
 import { DataServicesModule } from './services/data-services/data-services.module';
 import { AlbumUseCasesModule } from './use-cases/album/album-use-cases.module';
 import { ArtistUseCasesModule } from './use-cases/artist/artist-use-cases.module';
@@ -16,7 +16,8 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { NotificationsModule } from './notifications/notifications.module';
 import { NotificationsService } from './notifications/notifications.service';
-import { ExceptionsModule } from './exceptions/exception-everything.module'; 
+import { ExceptionsModule } from './exceptions/exception-everything.module';
+import { AuthModule } from './services/auth/auth-services.module';
 
 @Module({
   imports: [
@@ -32,9 +33,11 @@ import { ExceptionsModule } from './exceptions/exception-everything.module';
     NotificationsModule,
     ExceptionsModule,
     LoggerServiceModule,
+    AuthModule,
     ],
   controllers: [
-    AppController, 
+    AppController,
+    AuthController, 
     AlbumController,  
     ArtistController, 
     TrackController,
