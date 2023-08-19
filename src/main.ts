@@ -28,6 +28,9 @@ async function bootstrap() {
 
   await app.listen(appPort);
   
-  console.log('App running on port: ', appPort);
+  //console.log('App running on port: ', appPort);
+
+  app.get(LoggerService).log(`Started [App running on port: ${appPort}]`, 'AppBootstrap')
+
 }
 bootstrap();

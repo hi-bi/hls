@@ -21,7 +21,7 @@
             private prisma: PrismaService,
             private logger: LoggerService,
             ){
-            this.logger.log(`[InstanceLoader] - [PrismaDataServices class created]`, PrismaDataServices.name)
+            this.logger.log(`${PrismaDataServices.name} - [PrismaDataServices class created]`, 'AppBootstrap')
         }
 
         async onApplicationBootstrap() {
@@ -40,7 +40,7 @@
             this.favorites = new PrismaFavoritesRepository(this.prisma);
             this.favorites._service = this;
 
-            this.logger.log(`[InstanceLoader] - [PrismaDataServices class bootstraped]`, PrismaDataServices.name)
+            this.logger.log(`${PrismaDataServices.name} - [PrismaDataServices class bootstraped]`, 'AppBootstrap')
         }
        
     }
