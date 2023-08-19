@@ -21,27 +21,20 @@ export class LoggingInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-/*
+
         tap((value) => {
           const res = context.switchToHttp().getResponse();
           const now = new Date().toISOString().split('T');
 //          process.stdout.write(`[${context.getClass().name}] - [${now}] - [Response] - [${res.statusCode}] - [${JSON.stringify(value)}]\n`);
           this.logger.log(`[Response] - [${res.statusCode}] - [${JSON.stringify(value)}]`, context.getClass().name)
         }),
-        
-*/
+
         catchError((err) => {
-          console.log('interseptor catch error: ', err);
+//          console.log('interseptor catch error: ', err);
+          const appError = err as Error
           const request: Request = context.switchToHttp().getRequest();
-/*          
-          if (err instanceof TypeORMError) {
-            this.updateMetrics(METRIC_TYPE.DATABASE);
-          } else if (err instanceof HttpException) {
-            this.updateMetrics(METRIC_TYPE.APPLICATION);
-          } else {
-            this.updateMetrics(METRIC_TYPE.UNKNOWN);
-          }
-*/
+          this.logger.error(`[Uncaught Exception] - [${appError?.name}]: [${appError?.message}] -[${appError?.stack}]`, LoggingInterceptor.name)
+
           return throwError(
             () =>
               new HttpException(
@@ -50,10 +43,12 @@ export class LoggingInterceptor implements NestInterceptor {
                   timestamp: new Date().toISOString(),
                   route: request.url,
                   method: request.method,
+                  stack: appError?.stack
                 },
                 err.statusCode || 500
               )
           );
+
         })        
       );
   }
