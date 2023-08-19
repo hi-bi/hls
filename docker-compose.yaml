@@ -5,6 +5,14 @@ services:
       context: "./"
       target: "development"
     restart: always
+    environment:
+      LOGGING_LEVEL: ${LOGGING_LEVEL}
+      IS_FILE_LOGGING: ${IS_FILE_LOGGING}
+      LOGGING_GENERAL_FILE_NAME: ${LOGGING_GENERAL_FILE_NAME}
+      LOGGING_GENERAL_FILE_SIZE: ${LOGGING_GENERAL_FILE_SIZE}
+      IS_ERROR_FILE_LOGGING: ${IS_ERROR_FILE_LOGGING}
+      LOGGING_ERROR_FILE_NAME: ${LOGGING_ERROR_FILE_NAME}
+      LOGGING_ERROR_FILE_SIZE: ${LOGGING_ERROR_FILE_SIZE}
     ports:
       - "${PORT}:${PORT}"
     x-develop:

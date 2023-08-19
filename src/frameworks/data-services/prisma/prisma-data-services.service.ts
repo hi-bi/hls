@@ -6,6 +6,7 @@
     import { PrismaFavoritesRepository } from './prisma-favorites-repository';
     import { PrismaService } from './prisma-client.service';
     //import { PrismaClient } from '@prisma/client';
+    import { LoggerService } from 'src/services/logging-services/logging-services.service';
 
     @Injectable()
     export class PrismaDataServices implements OnApplicationBootstrap { 
@@ -16,8 +17,11 @@
         user: PrismaUserRepository;
         favorites: PrismaFavoritesRepository;
         
-        constructor(private prisma: PrismaService){
-            console.log('PrismaDataServices class created.')
+        constructor(
+            private prisma: PrismaService,
+            private logger: LoggerService,
+            ){
+            this.logger.log(`[InstanceLoader] - [PrismaDataServices class created]`, PrismaDataServices.name)
         }
 
         async onApplicationBootstrap() {
@@ -36,7 +40,7 @@
             this.favorites = new PrismaFavoritesRepository(this.prisma);
             this.favorites._service = this;
 
-            console.log('PrismaDataServices class bootstraped.')
+            this.logger.log(`[InstanceLoader] - [PrismaDataServices class bootstraped]`, PrismaDataServices.name)
         }
        
     }

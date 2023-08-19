@@ -67,14 +67,6 @@ import {
 //        timestamp: new Date().toISOString(),
 //        path: url,
       };
-      
-//      process.stdout.write(`[${host.getType()}] - [${now.split('T')}] - [Request] - [${url}] - [${method}] - [${JSON.stringify(body)}]\n`);
-//      this.logger.log(`[Request] - [${url}] - [${method}] - [${JSON.stringify(body)}]`, AllExceptionsFilter.name)
-
-//      process.stdout.write(`[${context.getClass().name}] - [${now}] - [Request] - [${url}] - [${method}] - [${body}]\n`);
-
-//      process.stdout.write(`[${host.getType()}] - [${now.split('T')}] - [Response] - [${httpStatus}] - [${JSON.stringify(responseBody)}]\n`);
-//      this.logger.log(`[Response] - [${httpStatus}] - [${exceptionStack}]`, AllExceptionsFilter.name)
 
       httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
     }
