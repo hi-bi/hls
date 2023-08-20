@@ -17,6 +17,7 @@ model DbUser {
   version     Int         @db.Integer
   createdAt   Decimal     @db.Decimal
   updatedAt   Decimal     @db.Decimal
+  refToken    String      @db.VarChar(255)
   @@map("user")
 }
 

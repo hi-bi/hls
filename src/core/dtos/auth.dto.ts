@@ -10,7 +10,8 @@ export class CheckAuthDto {
     @IsString()
     @IsNotEmpty()
     login: string;
-
+    
+    
     @ApiProperty({
         type: String,
         description: 'User password',

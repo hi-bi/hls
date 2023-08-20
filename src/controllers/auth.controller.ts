@@ -2,25 +2,15 @@ import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from 'src/services/auth/auth-services.service';
 import { CheckAuthDto } from 'src/core/dtos';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { Public } from 'src/services/auth/auth-services.constants';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('login')
-  @ApiParam({
-    name: 'login',
-    type: 'string',
-    required: true,
-    schema: { type: 'string' },
-  },)
-  @ApiParam({
-    name: 'name',
-    type: 'string',
-    required: true,
-    schema: { type: 'string' },
-  },)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ 
     description: 'Successful operation',

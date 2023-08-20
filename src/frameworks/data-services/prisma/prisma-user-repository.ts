@@ -96,6 +96,7 @@ export class PrismaUserRepository {
                     version: 1,
                     createdAt: new Prisma.Decimal(createdAt),
                     updatedAt: new Prisma.Decimal(createdAt),
+                    refToken: '',
                 }
             })
             
