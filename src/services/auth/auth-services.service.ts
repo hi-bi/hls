@@ -58,9 +58,9 @@ export class AuthService {
       throw new ForbiddenException('Authentication failed. No user with such login.');
     }
 
-    const passwordHash = await this.hashData( data.password);    
+    const compare = await bcryptjs.compare(data.password, user.password)
 
-    if (user.password !== passwordHash) {
+    if (!compare) {
       throw new ForbiddenException('Authentication failed. Password does not match actual one.');
     }
 
@@ -69,6 +69,31 @@ export class AuthService {
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     return tokens;
+  }
+
+  async refreshTokens(userId: string, refreshToken: string) {
+    
+    const user = await this.prisma.dbUser.findUnique({
+      where: {
+          id: userId,
+      }
+    })
+    
+    if (user == null || user.refToken == null) {
+        throw new ForbiddenException('Authentication failed. No user with such login or token is undefined.');
+    }
+
+    const compare = await bcryptjs.compare(refreshToken, user.refToken);
+
+    if (!compare) {
+      throw new ForbiddenException('Authentication failed. Token does not match actual one.');
+    }
+
+    const tokens = await this.getTokens(user.id, user.login);
+
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return tokens
   }
 
   async signIn(login: string, pass: string): Promise<any> {
@@ -90,8 +115,9 @@ export class AuthService {
   }
 
   async hashData(data: string) {
-    const salt = jwtConstants.salt
-    return await bcryptjs.hash(data, salt);
+    const salt = parseInt(jwtConstants.salt);
+    const saltHash = await bcryptjs.genSalt(salt);
+    return await bcryptjs.hash(data, saltHash);
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {

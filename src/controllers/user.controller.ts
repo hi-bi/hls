@@ -3,9 +3,10 @@ import { CreateUserDto, UpdateUserDto, CheckParam } from '../core/dtos';
 import { UserUseCases } from '../use-cases/user/user.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 //import { response } from 'express';
-import { jwtConstants } from 'src/services/auth/auth-services.constants';
-import * as bcrypt from 'bcryptjs'
+import { Public } from 'src/services/auth/auth-services.constants';
 
+
+@Public()
 @ApiTags('user')
 @Controller('user')
 export class UserController {
@@ -29,6 +30,8 @@ export class UserController {
     return this.userUseCases.getAllUsers();
   }
 
+  
+  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -62,6 +65,8 @@ export class UserController {
     return this.userUseCases.getUserById(param.id as unknown as string);
   }
 
+  
+  @Public()
   @Post()
   @HttpCode(201)
   @ApiResponse({
@@ -82,13 +87,11 @@ export class UserController {
     description: 'Bad request. Body does not contain required fields',
   })  
   async createUser(@Body() userDto: CreateUserDto) {
-    const cryptSalt = jwtConstants.salt
-    const hashedPassword = await bcrypt.hash(userDto.password, cryptSalt);
-    userDto.password = hashedPassword;
-
     return this.userUseCases.createUser(userDto);
   }
 
+  
+  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -126,17 +129,11 @@ export class UserController {
     @Param() param: CheckParam,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-
-    const cryptSalt = jwtConstants.salt
-    let hashedPassword = await bcrypt.hash(updateUserDto.newPassword, cryptSalt);
-    updateUserDto.newPassword = hashedPassword;
-
-    hashedPassword = await bcrypt.hash(updateUserDto.oldPassword, cryptSalt);
-    updateUserDto.oldPassword = hashedPassword;
-    
     return this.userUseCases.updateUser(param.id as unknown as string, updateUserDto)
   }
 
+ 
+  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
