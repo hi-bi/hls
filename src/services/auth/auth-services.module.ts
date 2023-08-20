@@ -6,14 +6,17 @@ import { jwtConstants } from './auth-services.constants';
 
 @Module({
   imports: [
-    PrismaService,
+//    PrismaService,
     JwtModule.register({
 //      global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    PrismaService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

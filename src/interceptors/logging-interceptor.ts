@@ -1,4 +1,4 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException, HttpStatus } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LoggerService } from 'src/services/logging-services/logging-services.service';
@@ -31,23 +31,34 @@ export class LoggingInterceptor implements NestInterceptor {
 
         catchError((err) => {
 //          console.log('interseptor catch error: ', err);
-          const appError = err as Error
-          const request: Request = context.switchToHttp().getRequest();
-          this.logger.error(`[Uncaught Exception] - [${appError?.name}]: [${appError?.message}] -[${appError?.stack}]`, LoggingInterceptor.name)
+            const httpStatus =
+            err instanceof HttpException
+              ? err.getStatus()
+              : HttpStatus.INTERNAL_SERVER_ERROR;
 
-          return throwError(
-            () =>
-              new HttpException(
-                {
-                  message: err?.message || err?.detail || "Internal error",
-                  timestamp: new Date().toISOString(),
-                  route: request.url,
-                  method: request.method,
-                  stack: appError?.stack
-                },
-                err.statusCode || 500
-              )
-          );
+          if (httpStatus !== HttpStatus.INTERNAL_SERVER_ERROR) {
+            throw err;  
+          } else {
+
+            const appError = err as Error
+            const request: Request = context.switchToHttp().getRequest();
+            this.logger.error(`[Uncaught Exception] - [${appError?.name}]: [${appError?.message}] -[${appError?.stack}]`, LoggingInterceptor.name)
+  
+            return throwError(
+              () =>
+                new HttpException(
+                  {
+                    message: err?.message || err?.detail || "Internal error",
+                    timestamp: new Date().toISOString(),
+                    route: request.url,
+                    method: request.method,
+                    stack: appError?.stack
+                  },
+                  err.statusCode || 500
+                )
+            );
+  
+          }
 
         })        
       );

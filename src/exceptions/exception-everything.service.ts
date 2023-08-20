@@ -53,6 +53,11 @@ import {
         ? exception.stack
         : host.getType();
 
+        const exceptionMessage =
+        exception instanceof HttpException
+          ? exception.message
+          : 'Internal server error';
+  
       const now = new Date().toISOString();
       const url = httpAdapter.getRequestUrl(ctx.getRequest());
       const method = httpAdapter.getRequestMethod(ctx.getRequest());
@@ -63,7 +68,7 @@ import {
 
       const responseBody = {
         statusCode: httpStatus,
-        message: 'Internal server error',
+        message: exceptionMessage,
 //        timestamp: new Date().toISOString(),
 //        path: url,
       };

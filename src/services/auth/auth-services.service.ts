@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/frameworks/data-services/prisma/prisma-client.service';
 import { JwtService } from '@nestjs/jwt';
 
@@ -15,8 +15,11 @@ export class AuthService {
             login: login,
         }
     });
+    if (user == null) {
+      throw new ForbiddenException('Authentication failed. No user with such login, password does not match actual one.');
+    }
     if (user?.password !== pass) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException('Authentication failed. No user with such login, password does not match actual one.');
     }
     const payload = { sub: user.id, username: user.login };
     return {
