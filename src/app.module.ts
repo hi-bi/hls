@@ -18,6 +18,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { NotificationsService } from './notifications/notifications.service';
 import { ExceptionsModule } from './exceptions/exception-everything.module';
 import { AuthModule } from './services/auth/auth-services.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { AuthModule } from './services/auth/auth-services.module';
   providers: [
     AppService,
     NotificationsService,
+    JwtService,
   ],
 })
 export class AppModule {}

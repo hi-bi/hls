@@ -1,14 +1,13 @@
-import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, UseGuards } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, CheckParam } from '../core/dtos';
 import { UserUseCases } from '../use-cases/user/user.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
-//import { response } from 'express';
-import { Public } from 'src/services/auth/auth-services.constants';
+//import { Public } from 'src/services/auth/auth-services.constants';
+import { AuthGuard } from 'src/services/auth/auth-services.guard';
 
-
-@Public()
 @ApiTags('user')
 @Controller('user')
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private userUseCases: UserUseCases) {}
 
@@ -31,7 +30,7 @@ export class UserController {
   }
 
   
-  @Public()
+//  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -66,7 +65,7 @@ export class UserController {
   }
 
   
-  @Public()
+//  @Public()
   @Post()
   @HttpCode(201)
   @ApiResponse({
@@ -91,7 +90,7 @@ export class UserController {
   }
 
   
-  @Public()
+//  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -133,7 +132,7 @@ export class UserController {
   }
 
  
-  @Public()
+//  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',

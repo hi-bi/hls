@@ -1,10 +1,12 @@
-import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, UseGuards } from '@nestjs/common';
 import { CreateTrackDto, UpdateTrackDto, CheckParam } from '../core/dtos';
 import { TrackUseCases } from '../use-cases/track/track.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/services/auth/auth-services.guard';
 
 @ApiTags('track')
 @Controller('track')
+@UseGuards(AuthGuard)
 export class TrackController {
   constructor(private trackUseCases: TrackUseCases) {}
 

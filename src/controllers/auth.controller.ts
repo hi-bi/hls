@@ -3,7 +3,6 @@ import { Request } from 'express';
 import { AuthService } from 'src/services/auth/auth-services.service';
 import { CheckAuthDto, CreateUserDto } from 'src/core/dtos';
 import { ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
-import { Public } from 'src/services/auth/auth-services.constants';
 
 export type Refresh = {
   sub: string,
@@ -18,7 +17,6 @@ export interface RefreshRequest extends Request {
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
@@ -33,7 +31,6 @@ export class AuthController {
     return this.authService.signUp(signUpDto);
   }
 
-  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ 
@@ -60,7 +57,6 @@ export class AuthController {
     return this.authService.logIn(logInDto);
   }
 
-  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ 

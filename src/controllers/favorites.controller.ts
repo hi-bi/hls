@@ -1,11 +1,13 @@
-import { Controller, Get, Param, Res, Post, HttpCode, Delete, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param, Res, Post, HttpCode, Delete, HttpStatus, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { CheckParam } from '../core/dtos';
 import { FavoritesUseCases } from '../use-cases/favorites/favorites.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AuthGuard } from 'src/services/auth/auth-services.guard';
 
 @ApiTags('favs')
 @Controller('favs')
+@UseGuards(AuthGuard)
 export class FavoritesController {
   constructor(private favoritesUseCases: FavoritesUseCases) {}
 
