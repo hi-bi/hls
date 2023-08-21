@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Album } from '../../core/entities';
-import { IDataServices } from '../../core/abstracts';
+//import { Album } from '../../core/entities';
+//import { IDataServices } from '../../core/abstracts';
+import { PrismaDataServices } from 'src/frameworks/data-services/prisma/prisma-data-services.service';
 import { CreateAlbumDto, UpdateAlbumDto } from '../../core/dtos';
 import { AlbumFactoryService } from './album-factory.service';
+import { Album } from '@prisma/client';
 
 @Injectable()
 export class AlbumUseCases {
   constructor(
-    private dataServices: IDataServices,
+    private dataServices: PrismaDataServices,
     private albumFactoryService: AlbumFactoryService,
   ) {}
 
@@ -42,7 +44,7 @@ export class AlbumUseCases {
 
   deleteAlbum(
     albumId: string,
-  ): Promise<Album> {
+  ): Promise<unknown> {
     return new Promise ((resolve, reject) => {
       resolve(this.dataServices.album.delete(albumId));
     })

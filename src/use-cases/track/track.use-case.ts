@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Track } from '../../core/entities';
-import { IDataServices } from '../../core/abstracts';
+//import { Track } from '../../core/entities';
+//import { IDataServices } from '../../core/abstracts';
+import { PrismaDataServices } from 'src/frameworks/data-services/prisma/prisma-data-services.service';
 import { CreateTrackDto, UpdateTrackDto } from '../../core/dtos';
 import { TrackFactoryService } from './track-factory.service';
+import { Track } from '@prisma/client';
 
 @Injectable()
 export class TrackUseCases {
   constructor(
-    private dataServices: IDataServices,
+    private dataServices: PrismaDataServices,
     private trackFactoryService: TrackFactoryService,
   ) {}
 
@@ -42,9 +44,9 @@ export class TrackUseCases {
 
   deleteTrack(
     trackId: string,
-  ): Promise<Track> {
+  ): Promise<unknown> {
     return new Promise ((resolve, reject) => {
-      resolve(this.dataServices.track.delete(trackId));
+      resolve( this.dataServices.track.delete(trackId));
     })
   }
 

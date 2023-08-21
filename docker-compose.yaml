@@ -1,0 +1,61 @@
+services:
+  app_rss:
+    container_name: app_rss
+    build:
+      context: "./"
+      target: "development"
+    restart: always
+    environment:
+      LOGGING_LEVEL: ${LOGGING_LEVEL}
+      IS_FILE_LOGGING: ${IS_FILE_LOGGING}
+      LOGGING_GENERAL_FILE_NAME: ${LOGGING_GENERAL_FILE_NAME}
+      LOGGING_GENERAL_FILE_SIZE: ${LOGGING_GENERAL_FILE_SIZE}
+      IS_ERROR_FILE_LOGGING: ${IS_ERROR_FILE_LOGGING}
+      LOGGING_ERROR_FILE_NAME: ${LOGGING_ERROR_FILE_NAME}
+      LOGGING_ERROR_FILE_SIZE: ${LOGGING_ERROR_FILE_SIZE}
+      CRYPT_SALT: ${CRYPT_SALT}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_SECRET_REFRESH_KEY: ${JWT_SECRET_REFRESH_KEY}
+      TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
+      TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
+    ports:
+      - "${PORT}:${PORT}"
+    x-develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+    volumes:
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+      - ./node_modules:/app/node_modules
+    depends_on:
+      - db_rss
+    networks:
+      rss_network:
+
+  db_rss:
+    container_name: ${PG_CONTAINER_NAME}
+    image: postgres:14.9-alpine3.18
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${DB_PORT}:${DB_DOCKER_PORT}"
+    networks:
+      rss_network:
+    volumes:
+      - rss_db_data:/var/lib/postgresql/data
+      
+networks:
+  rss_network:
+    driver: bridge
+
+volumes:
+  rss_db_data:

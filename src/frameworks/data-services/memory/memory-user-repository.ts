@@ -4,6 +4,7 @@ import { UpdateUserDto } from 'src/core/dtos';
 import { MemoryDataServices } from './memory-data-services.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { v4 } from 'uuid';
+import { Prisma } from '@prisma/client';
 
 export class MemoryUserRepository<T> implements IGenericRepository<T> {
     

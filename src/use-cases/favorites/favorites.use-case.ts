@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Favorites } from '../../core/entities';
-import { IDataServices } from '../../core/abstracts';
+import { PrismaDataServices } from 'src/frameworks/data-services/prisma/prisma-data-services.service';
+import { Favorites } from '@prisma/client';
 
 @Injectable()
 export class FavoritesUseCases {
   constructor(
-    private dataServices: IDataServices,
+    private dataServices: PrismaDataServices,
   ) {}
 
   getAllFavorites(): Promise<Favorites> {
     return new Promise ((resolve, reject) => {
-      resolve(this.dataServices.favorites.getAll()); 
+      resolve( this.dataServices.favorites.getAll()); 
     })
   }
 
@@ -20,7 +20,7 @@ export class FavoritesUseCases {
     })
   }
 
-  deleteFavsTrack(id: string): Promise<Favorites> {
+  deleteFavsTrack(id: string): Promise<any> {
     return new Promise ((resolve, reject) => {
       resolve(this.dataServices.favorites.deleteTrack(id)); 
     })
@@ -32,7 +32,7 @@ export class FavoritesUseCases {
     })
   }
 
-  deleteFavsAlbum(id: string): Promise<Favorites> {
+  deleteFavsAlbum(id: string): Promise<any> {
     return new Promise ((resolve, reject) => {
       resolve(this.dataServices.favorites.deleteAlbum(id)); 
     })
@@ -44,7 +44,7 @@ export class FavoritesUseCases {
     })
   }
 
-  deleteFavsArtist(id: string): Promise<Favorites> {
+  deleteFavsArtist(id: string): Promise<any> {
     return new Promise ((resolve, reject) => {
       resolve(this.dataServices.favorites.deleteArtist(id)); 
     })

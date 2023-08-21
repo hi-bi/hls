@@ -1,25 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { User } from '../../core/entities';
 import { CreateUserDto, UpdateUserDto } from '../../core/dtos';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserFactoryService {
   createNewUser(createUserDto: CreateUserDto) {
-    const newUser = new User();
-    newUser.login = createUserDto.login;
-    newUser.password = createUserDto.password;
-    newUser.version = 1;
-    newUser.createdAt = new Date().getTime();
-    newUser.updatedAt = newUser.createdAt;
+    const createdDate = new Date().getTime(); 
+    const newUser = new User({
+      login: createUserDto.login,
+      password: createUserDto.password,
+      version: 1,
+      createdAt: createdDate,
+      updatedAt: createdDate,
+    });
 
     return newUser;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   updateUser(updateUserDto: UpdateUserDto) {
-    const newUser = new User();
-    newUser.password = updateUserDto.newPassword + ' ' + updateUserDto.oldPassword;
-    newUser.version;
-    newUser.updatedAt = new Date().getTime();
+    const newUser = new User({
+      password: updateUserDto.newPassword + ' ' + updateUserDto.oldPassword,
+      updatedAt: new Date().getTime(),
+    });
 
     return newUser;
   }

@@ -1,10 +1,13 @@
-import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, UseGuards } from '@nestjs/common';
 import { CreateAlbumDto, UpdateAlbumDto, CheckParam } from '../core/dtos';
 import { AlbumUseCases } from '../use-cases/album/album.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { AuthGuard } from 'src/services/auth/auth-services.guard';
 
 @ApiTags('album')
 @Controller('album')
+//@Public()
+@UseGuards(AuthGuard)
 export class AlbumController {
   constructor(private albumUseCases: AlbumUseCases) {}
 

@@ -1,11 +1,14 @@
-import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, HttpCode, Delete, UseGuards } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, CheckParam } from '../core/dtos';
 import { UserUseCases } from '../use-cases/user/user.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
-import { response } from 'express';
+//import { Public } from 'src/services/auth/auth-services.constants';
+import { AuthGuard } from 'src/services/auth/auth-services.guard';
+//import { RolesGuard } from 'src/services/auth/auz-services.guard';
 
 @ApiTags('user')
 @Controller('user')
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private userUseCases: UserUseCases) {}
 
@@ -27,6 +30,8 @@ export class UserController {
     return this.userUseCases.getAllUsers();
   }
 
+  
+//  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -60,6 +65,8 @@ export class UserController {
     return this.userUseCases.getUserById(param.id as unknown as string);
   }
 
+  
+//  @Public()
   @Post()
   @HttpCode(201)
   @ApiResponse({
@@ -79,10 +86,12 @@ export class UserController {
     status: 400,
     description: 'Bad request. Body does not contain required fields',
   })  
-  createUser(@Body() userDto: CreateUserDto) {
+  async createUser(@Body() userDto: CreateUserDto) {
     return this.userUseCases.createUser(userDto);
   }
 
+  
+//  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
@@ -116,14 +125,15 @@ export class UserController {
     status: 404,
     description: 'Record with id === userId does not exist',
   })
-  updateUser(
+  async updateUser(
     @Param() param: CheckParam,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-  
     return this.userUseCases.updateUser(param.id as unknown as string, updateUserDto)
   }
 
+ 
+//  @Public()
   @ApiParam({
     name: 'id',
     type: 'string',
