@@ -6,6 +6,7 @@ import { AuthGuard } from 'src/services/auth/auth-services.guard';
 
 @ApiTags('album')
 @Controller('album')
+//@Public()
 @UseGuards(AuthGuard)
 export class AlbumController {
   constructor(private albumUseCases: AlbumUseCases) {}

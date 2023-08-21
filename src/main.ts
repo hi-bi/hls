@@ -14,7 +14,7 @@ async function bootstrap() {
     app.useGlobalPipes( new ValidationPipe());
 
     app.useLogger(app.get(LoggerService));
-    
+
     const options = new DocumentBuilder()
       .setTitle("Home Library Service")
       .setDescription("Home music library service")

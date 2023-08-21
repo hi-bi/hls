@@ -5,6 +5,7 @@ import { PrismaService } from 'src/frameworks/data-services/prisma/prisma-client
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth-services.constants';
 //import { AuthGuard } from './auth-services.guard';
+//import { RolesGuard } from './auz-services.guard';
 import { RefreshTokenStrategy } from './strategies/jwt-refresh.strategy'; 
 
 @Module({
@@ -20,6 +21,10 @@ import { RefreshTokenStrategy } from './strategies/jwt-refresh.strategy';
 //    {
 //      provide: APP_GUARD,
 //      useClass: AuthGuard,
+//    },
+//    {
+//      provide: APP_GUARD,
+//      useClass: RolesGuard,
 //    },
     AuthService,
     PrismaService,

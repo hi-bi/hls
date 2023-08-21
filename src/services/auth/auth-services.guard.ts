@@ -26,20 +26,23 @@ import {
  
       const request = context.switchToHttp().getRequest();
       if (request.url == '/doc') {
-//        console.log('AuthGuard Request: ', request);
         return true;
       }
 
       const token = this.extractTokenFromHeader(request);
+
       if (!token) {
+
         throw new UnauthorizedException();
-      }
+      } 
+      console.log('jwtConstants.accessSecret: ', jwtConstants.accessSecret);
       try {
         const payload = await this.jwtService.verifyAsync(token, {
           secret: jwtConstants.accessSecret,
         });
         // 💡 We're assigning the payload to the request object here
         // so that we can access it in our route handlers
+        
         request['user'] = payload;
       } catch {
         throw new UnauthorizedException();

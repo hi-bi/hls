@@ -44,8 +44,9 @@ export class AuthService {
     const tokens = await this.getTokens(newUser.id, newUser.login); 
     
     await this.updateRefreshToken(newUser.id, tokens.refreshToken);
-
-    return tokens;
+    
+    return {id: newUser.id};
+//    return tokens;
   }
 
   async logIn(data: CheckAuthDto) {

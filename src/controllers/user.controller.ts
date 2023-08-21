@@ -4,6 +4,7 @@ import { UserUseCases } from '../use-cases/user/user.use-case';
 import { ApiParam, ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 //import { Public } from 'src/services/auth/auth-services.constants';
 import { AuthGuard } from 'src/services/auth/auth-services.guard';
+//import { RolesGuard } from 'src/services/auth/auz-services.guard';
 
 @ApiTags('user')
 @Controller('user')
