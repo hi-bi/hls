@@ -4,7 +4,7 @@ FROM node:18-alpine AS base
 FROM base AS development
 WORKDIR /app
 COPY . .
-RUN npm install && npm run build
+RUN npm ci && npm run build
 RUN npx prisma generate
 ENTRYPOINT ["npm", "run"]
 CMD ["start:dev:docker"]
