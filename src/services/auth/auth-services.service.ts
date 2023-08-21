@@ -71,14 +71,23 @@ export class AuthService {
     return tokens;
   }
 
-  async refreshTokens(userId: string, refreshToken: string) {
+  //async refreshTokens(userId: string, refreshToken: string) {
+    async refreshTokens(refreshToken: string) {
+
+//    const user = await this.prisma.dbUser.findUnique({
+//      where: {
+//          id: userId,
+//      }
+//    })
     
-    const user = await this.prisma.dbUser.findUnique({
+    const user = await this.prisma.dbUser.findFirst({
       where: {
-          id: userId,
+        refToken: {
+          not: null
+        }
       }
     })
-    
+
     if (user == null || user.refToken == null) {
         throw new ForbiddenException('Authentication failed. No user with such login or token is undefined.');
     }

@@ -1,8 +1,9 @@
-import { Body, Req, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Req, Controller, Post, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from 'src/services/auth/auth-services.service';
 import { CheckAuthDto, CreateUserDto } from 'src/core/dtos';
 import { ApiTags, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import { JwtRefreshGuard } from '../services/auth/guards/jwt-refresh.guard'
 
 export type Refresh = {
   sub: string,
@@ -57,6 +58,8 @@ export class AuthController {
     return this.authService.logIn(logInDto);
   }
 
+
+  @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ 
@@ -79,11 +82,8 @@ export class AuthController {
     status: 403,
     description: 'Authentication failed. Wrong user or user token.',
   })
-  refresh(@Req() req: RefreshRequest) {
-    const userId = req.user['sub'];
-    const refreshToken = req.user['refreshToken'];
-    
-    return this.authService.refreshTokens(userId, refreshToken);
+  refresh(@Body() refreshToken: string) {
+    return this.authService.refreshTokens(refreshToken);
   }
 
 }
